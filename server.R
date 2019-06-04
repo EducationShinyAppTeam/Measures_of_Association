@@ -577,23 +577,23 @@ shinyServer(function(session, input, output) {
     
     ## Head
     else if(value$mistake == 1 ) {
-      img(src = "treegame2.jpg")
+      img(src = "treegame2.jpg", width = 500)
     }
     
     ## Arms
     else if(value$mistake == 2) {
-      img(src = "treegame3.jpg")
+      img(src = "treegame3.jpg", width = 500)
     }
     
     ## Body
     else if(value$mistake == 3 ) {
-      img(src = "treegame4.jpg")
+      img(src = "treegame4.jpg", width = 500)
     }
     
     
     ## Legs
     else if(value$mistake == 4) {
-      img(src = "treegame5.jpg")
+      img(src = "treegame5.jpg", width = 500)
     }
     
   })
