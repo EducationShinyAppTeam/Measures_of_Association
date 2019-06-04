@@ -19,8 +19,8 @@ ui <- dashboardPage(skin = "yellow",
                         menuItem("Challenge", tabName = "Hangman",icon = icon("cogs"))
                       )
                     ),
+                    
                     dashboardBody(
-                      
                       tags$head(
                         tags$link(rel = "stylesheet", type = "text/css", href = "Feature.css"),
                         tags$style(HTML(
@@ -48,7 +48,7 @@ ui <- dashboardPage(skin = "yellow",
                                 h4("Relative risk (RR) is the ratio of probabilities for two groups."), 
                                 h5("Ex) The risk of having a heart attack in the next five years for men divided by the same risk for women."), 
                                 h4("In essence:"), 
-                                tags$a(tags$img(src='rr.png', align = "center")),
+                                tags$a(tags$img(src = 'rr.png', align = "center")),
                                 
                                 br(),
                                 h3(tags$li("Odds & Odds Ratio:")),
@@ -60,14 +60,16 @@ ui <- dashboardPage(skin = "yellow",
                                 #   the odds ratio is sometimes called the 'cross product ratio' as its estimate is calculated as the product of the values on one 
                                 #   diagonal divided by the product of the values on the opposite diagonal."),
                                 br(),
-                                
-                                
                                 div(style = "text-align:center",
-                                    bsButton("nextbutton", "Go to the overview", icon("wpexplorer"), size = "large",style = "warning"))),
+                                    bsButton(inputId = "nextbutton",
+                                             label = "Go to the overview",
+                                             icon("wpexplorer"),
+                                             size = "large",
+                                             style = "warning"))),
                         
                         #Overview Tab
                         tabItem(tabName = "overview",
-                                tags$a(href='http://stat.psu.edu/',   tags$img(src='logo.png', align = "left", width = 180)),
+                                tags$a(href = 'http://stat.psu.edu/', tags$img(src='logo.png', align = "left", width = 180)),
                                 br(),
                                 br(),
                                 br(),
@@ -75,7 +77,8 @@ ui <- dashboardPage(skin = "yellow",
                                 h4("In this App, you will explore measures of associations and test your ability to distinguish probability, risk, relative risk, odds and odds ratio."),
                                 br(),
                                 h3(strong("Instructions:")),
-                                h4(tags$li("You'll start this game with nothing on the gallows, once you have at least one answer wrong, a part of the body will be drawn, and if the whole little man is completely drawn, then you have lost this game.")),
+                                h4(tags$li("You'll start this game with nothing on the gallows, once you have at least one answer wrong, a part of the body will be drawn,
+                                           and if the whole little man is completely drawn, then you have lost this game.")),
                                 h4(tags$li("Choose different measure of associations for each numeric value, then click 'Submit' to check your answer.")),
                                 h4(tags$li("If you got every question correct, then you can click 'Next Question' to move on your challenge, otherwise a part of body will be drawn on the image.")),
                                 h4(tags$li("You cannot revise your answer once you click 'Submit', so think carefully before submit.")),
@@ -115,23 +118,23 @@ ui <- dashboardPage(skin = "yellow",
                                               fluidRow(
                                                 uiOutput("result")
                                               )),
-                                    fluidRow(
+                                    #fluidRow(
                                       
-                                      bsButton('reset','RELOAD', size = 'large', style = 'warning',disabled = TRUE),
-                                      bsButton('restart','RESTART',size = 'large', style = 'primary',disabled = TRUE)
-                                    ),
+                                    #  bsButton('reset','RELOAD', size = 'large', style = 'warning',disabled = TRUE),
+                                    #  bsButton('restart','RESTART',size = 'large', style = 'primary',disabled = TRUE)
+                                    #),
                                     
                                     fluidRow(
                                       h3("Identify the measure association of the following numeric values: ")
                                     ),
                                     
-                                    fluidRow(uiOutput('box1'), selectInput('first',"",c('Select Answer','Relative Risk', 'Risk', 'Odds','Odds Ratio', "Probability"), width='30%'),
+                                    fluidRow(uiOutput('box1'), selectInput('first',"",c("",'Relative Risk', 'Risk', 'Odds','Odds Ratio', "Probability"), width = '30%'),
                                              uiOutput('mark1')),
-                                    fluidRow(uiOutput('box2'),selectInput('second',"",c('Select Answer','Relative Risk', 'Risk',  'Odds','Odds Ratio', "Probability"), width='30%'),
+                                    fluidRow(uiOutput('box2'),selectInput('second',"",c("",'Relative Risk', 'Risk',  'Odds','Odds Ratio', "Probability"), width = '30%'),
                                              uiOutput('mark2')),
-                                    fluidRow(uiOutput('box3'),selectInput('third',"",c('Select Answer','Relative Risk', 'Risk',  'Odds','Odds Ratio', "Probability"), width='30%'),
+                                    fluidRow(uiOutput('box3'),selectInput('third',"",c("",'Relative Risk', 'Risk',  'Odds','Odds Ratio', "Probability"), width = '30%'),
                                              uiOutput('mark3')),
-                                    fluidRow(uiOutput('box4'),selectInput('fourth',"",c('Select Answer','Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width='30%'),
+                                    fluidRow(uiOutput('box4'),selectInput('fourth',"",c("",'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
                                              uiOutput('mark4')),
                                     
                                     br(),

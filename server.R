@@ -44,18 +44,18 @@ shinyServer(function(session, input, output) {
     updateSelectInput(session, "third","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
     updateSelectInput(session, "fourth","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
     
-    output$result <- renderUI({
-      h3("Choose different measure of associations for each numeric value, then click 'Submit' to check your answer")
-    })
+    #output$result <- renderUI({
+    #  h3("Choose different measure of associations for each numeric value, then click 'Submit' to check your answer")
+    #})
     
   })
   
   observeEvent(input$restart,{
     updateButton(session, "submit", disabled = FALSE)
     updateButton(session,"restart",disable =TRUE)
-    output$result <- renderUI({
-      h3("Choose different measure of associations for each numeric value, then click 'Submit' to check your answer")
-    })
+    #output$result <- renderUI({
+    #  h3("Choose different measure of associations for each numeric value, then click 'Submit' to check your answer")
+    #})
     updateSelectInput(session, "first","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
     updateSelectInput(session, "second","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
     updateSelectInput(session, "third","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
@@ -102,10 +102,9 @@ shinyServer(function(session, input, output) {
     
     uiOutput('box4')  
   })
-  output$result <- renderUI({
-    
-    h3("Choose different measure of associations for each numeric value, then click 'Submit' to check your answer")
-  })
+  #output$result <- renderUI({
+   # h3("Choose different measure of associations for each numeric value, then click 'Submit' to check your answer")
+  #})
   
   
   value <- reactiveValues(index =  15, mistake = 0, correct = 0)
@@ -126,9 +125,9 @@ shinyServer(function(session, input, output) {
     updateButton(session,"submit",disabled = FALSE)
     updateButton(session,"reset", disabled = TRUE)
     
-    output$result <- renderUI({
-      h3("Choose different measure of associations for each numeric value, then click 'Submit' to check your answer")
-    })
+    #output$result <- renderUI({
+    #  h3("Choose different measure of associations for each numeric value, then click 'Submit' to check your answer")
+    #})
     
     updateSelectInput(session, "first","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
     updateSelectInput(session, "second","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
@@ -173,10 +172,9 @@ shinyServer(function(session, input, output) {
       updateButton(session, "nextq", disabled = TRUE)
       updateButton(session,"submit", disabled = TRUE)
       updateButton(session, "reset",disabled = FALSE)
-      output$result <- renderUI({
-        
-        h3("Please click RELOAD to reload questions from database so you can continue this game")
-      })
+      #output$result <- renderUI({
+      #  h3("Please click RELOAD to reload questions from database so you can continue this game")
+      #})
     }
     
   })
@@ -521,9 +519,9 @@ shinyServer(function(session, input, output) {
     {
       value$mistake <- value$mistake + 1
       
-      output$result <- renderUI({
-        h3("Sorry, you have at least one wrong answer. Click 'Next Question' to move on your challenge")
-      })
+      #output$result <- renderUI({
+      #  h3("Sorry, you have at least one wrong answer. Click 'Next Question' to move on your challenge")
+      #})
     }
     
     
@@ -536,10 +534,10 @@ shinyServer(function(session, input, output) {
       
       value[["mistake"]] <- 0
       value$correct <- 0
-      output$result <- renderUI({
-        h3("Sorry, you have lost the Game. You need to start this game from the beginning")
+      #output$result <- renderUI({
+      #  h3("Sorry, you have lost the Game. You need to start this game from the beginning")
         
-      })
+      #})
     }
   })
   
@@ -553,15 +551,15 @@ shinyServer(function(session, input, output) {
     {
       value$correct <- value$correct + 1
       
-      output$result <- renderUI({
-        h3("Congratulation! You got this one correct. Click 'Next Question' to move on your challenge")
-      })
+      #output$result <- renderUI({
+      #  h3("Congratulation! You got this one correct. Click 'Next Question' to move on your challenge")
+      #})
     }
     
     if(value$correct == 10){
-      output$result <- renderUI({
-        h3("Well Done! You have completed this challenge!  You saved that poor little man!")
-      })
+      #output$result <- renderUI({
+      #  h3("Well Done! You have completed this challenge!  You saved that poor little man!")
+      #})
       updateButton(session, "nextq", disabled = TRUE)
       updateButton(session, "restart", disabled = FALSE)
     }
