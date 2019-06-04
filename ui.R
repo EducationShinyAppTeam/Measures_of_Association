@@ -5,7 +5,12 @@ library(shinyBS)
 library(shinyWidgets)
 
 ui <- dashboardPage(skin = "yellow",
-                    dashboardHeader(title = "Measures of Association", titleWidth = 250),
+                    dashboardHeader(title = "Measures of Association", titleWidth = 250,
+                                    tags$li(class = "dropdown",
+                                            tags$a(href = "https://shinyapps.science.psu.edu/",
+                                                   icon("home"))),
+                                    tags$li(class = "dropdown",
+                                            actionLink("info", icon("info"), class = "myClass"))),
                     dashboardSidebar(
                       sidebarMenu(
                         id ="tabs",
@@ -71,9 +76,9 @@ ui <- dashboardPage(skin = "yellow",
                                 h4(tags$li("Choose different measure of associations for each numeric value, then click 'Submit' to check your answer.")),
                                 h4(tags$li("If you got every question correct, then you can click 'Next Question' to move on your challenge, otherwise a part of body will be drawn on the image.")),
                                 h4(tags$li("You cannot revise your answer once you click 'Submit', so think carefully before submit.")),
-                                
+                                br(),
                                 div(style = "text-align:center",
-                                    bsButton("go", "G O !", icon("bolt"), size = "medium",style = "warning")),
+                                    bsButton("go", "GO!", icon("bolt"), size = "medium", style = "warning", class = "circle grow")),
                                 br(),
                                 h3(strong("Acknowledgements:")),
                                 h4("This app was developed and coded by Zhiliang Zhang. Special thanks to Luxin Wang for helping some programming issues.")
@@ -84,12 +89,12 @@ ui <- dashboardPage(skin = "yellow",
                         # Challenge Tab
                         
                         tabItem(tabName = "Hangman",
-                                div(style="display: inline-block;vertical-align:top;",
-                                    tags$a(href='https://shinyapps.science.psu.edu/',tags$img(src='homebut.PNG', width = 19))
-                                ),
-                                div(style="display: inline-block;vertical-align:top;",
-                                    circleButton("info",icon = icon("info"), status = "myClass",size = "xs")
-                                ),
+                                #div(style="display: inline-block;vertical-align:top;",
+                                #    tags$a(href='https://shinyapps.science.psu.edu/',tags$img(src='homebut.PNG', width = 19))
+                                #),
+                                #div(style="display: inline-block;vertical-align:top;",
+                                #    circleButton("info",icon = icon("info"), status = "myClass",size = "xs")
+                                #),
                                 titlePanel("Distinguish the measure associations"),
                                 
                                 
