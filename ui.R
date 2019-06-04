@@ -144,6 +144,23 @@ ui <- dashboardPage(skin = "yellow",
                                              uiOutput('mark4')),
                                     
                                     br(),
+                                  div(style = "text-align:left",
+                                      fluidRow(
+                                      column(3,  
+                                             bsButton(inputId = 'submit',
+                                                      label = "Submit",
+                                                      size = "large",
+                                                      style = "warning",
+                                                      disabled = FALSE)))),
+                                    br(),
+                                div(style = "text-align:left",
+                                    fluidRow(
+                                    column(3,
+                                           bsButton(inputId = 'nextq',
+                                                    label = "Next Question",
+                                                    size = "large",
+                                                    style = "success",
+                                                    disabled = TRUE)))),
                                     br(),
                                     br(),
                                     
@@ -169,20 +186,8 @@ ui <- dashboardPage(skin = "yellow",
                                              uiOutput("distPlot", width = "100%"))),
                                     br(),
                                     br(),
-                                    br(),
-                                    fluidRow(
-                                      column(3, offset = 2,
-                                             bsButton(inputId = 'nextq',
-                                                      label = "Next Question",
-                                                      size = "large",
-                                                      style = "success",
-                                                      disabled = TRUE)),
-                                      column(3, 
-                                             bsButton(inputId = 'submit',
-                                                      label = "Submit",
-                                                      size = "large",
-                                                      style = "warning",
-                                                      disabled = FALSE)))
+                                    br()
+                                    
                                     # bsPopover("distPlot", " ","Choose different measure of association for each numeric value, then click Submit to check your answer", place="left")
                                     
                                     
