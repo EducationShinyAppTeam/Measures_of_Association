@@ -114,10 +114,10 @@ ui <- dashboardPage(skin = "yellow",
                                 sidebarLayout(
                                   sidebarPanel(
                                     
-                                    wellPanel(style = "background-color: #EAF2F8",
-                                              fluidRow(
-                                                uiOutput("result")
-                                              )),
+                                    #wellPanel(style = "background-color: #EAF2F8",
+                                    #          fluidRow(
+                                    #            uiOutput("result")
+                                    #          )),
                                     #fluidRow(
                                       
                                     #  bsButton('reset','RELOAD', size = 'large', style = 'warning',disabled = TRUE),
