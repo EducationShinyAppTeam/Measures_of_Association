@@ -571,29 +571,29 @@ shinyServer(function(session, input, output) {
     
     ## Background
     if(value$mistake == 0){
-      img(src = "hangman-1.jpg")
+      img(src = "treegame1.jpg", width = 500)
       
     }
     
     ## Head
     else if(value$mistake == 1 ) {
-      img(src = "hangman-2.jpg")
+      img(src = "treegame2.jpg")
     }
     
     ## Arms
     else if(value$mistake == 2) {
-      img(src="hangman-3.jpg")
+      img(src = "treegame3.jpg")
     }
     
     ## Body
     else if(value$mistake == 3 ) {
-      img(src="hangman-4.jpg")
+      img(src = "treegame4.jpg")
     }
     
     
     ## Legs
     else if(value$mistake == 4) {
-      img(src= "hangman-5.jpg")
+      img(src = "treegame5.jpg")
     }
     
   })
