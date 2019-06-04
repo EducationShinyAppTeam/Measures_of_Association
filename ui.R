@@ -13,10 +13,10 @@ ui <- dashboardPage(skin = "yellow",
                                             actionLink("info", icon("info"), class = "myClass"))),
                     dashboardSidebar(
                       sidebarMenu(
-                        id ="tabs",
-                        menuItem("Prerequiste",tabName = "prerequisite",icon = icon("book")),
-                        menuItem("Overview", tabName = "overview",icon = icon("dashboard")),
-                        menuItem("Challenge", tabName = "Hangman",icon = icon("cogs"))
+                        id = "tabs",
+                        menuItem("Prerequiste", tabName = "prerequisite", icon = icon("book")),
+                        menuItem("Overview", tabName = "overview", icon = icon("dashboard")),
+                        menuItem("Challenge", tabName = "Hangman", icon = icon("cogs"))
                       )
                     ),
                     
@@ -53,9 +53,11 @@ ui <- dashboardPage(skin = "yellow",
                                 br(),
                                 h3(tags$li("Odds & Odds Ratio:")),
                                 h4("Odds compare events with the opposite event."), 
-                                h5("Ex) If a horse wins 1 out of every 5 races, its odds of winning are 1 to 4 (expressed as 1:4) since it wins one race for every 4 it loses."), 
+                                h5("Ex) If a horse wins 1 out of every 5 races, its odds of winning are 1 to 4
+                                   (expressed as 1:4) since it wins one race for every 4 it loses."), 
                                 h4("An odds ratio  is the ratio of the odds for two groups."), 
-                                h5("Ex) the odds for having a heart attack in the next five years for men divided by the corresponding odds for women."),  
+                                h5("Ex) the odds for having a heart attack in the next five years for
+                                   men divided by the corresponding odds for women."),  
                                 #h4("When data is displayed in a 2 x 2 table, 
                                 #   the odds ratio is sometimes called the 'cross product ratio' as its estimate is calculated as the product of the values on one 
                                 #   diagonal divided by the product of the values on the opposite diagonal."),
@@ -69,7 +71,7 @@ ui <- dashboardPage(skin = "yellow",
                         
                         #Overview Tab
                         tabItem(tabName = "overview",
-                                tags$a(href = 'http://stat.psu.edu/', tags$img(src='logo.png', align = "left", width = 180)),
+                                tags$a(href = 'http://stat.psu.edu/', tags$img(src = 'logo.png', align = "left", width = 180)),
                                 br(),
                                 br(),
                                 br(),
@@ -77,14 +79,21 @@ ui <- dashboardPage(skin = "yellow",
                                 h4("In this App, you will explore measures of associations and test your ability to distinguish probability, risk, relative risk, odds and odds ratio."),
                                 br(),
                                 h3(strong("Instructions:")),
-                                h4(tags$li("You'll start this game with nothing on the gallows, once you have at least one answer wrong, a part of the body will be drawn,
+                                h4(tags$li("You'll start this game with nothing on the gallows, once you
+                                            have at least one answer wrong, a part of the body will be drawn,
                                            and if the whole little man is completely drawn, then you have lost this game.")),
                                 h4(tags$li("Choose different measure of associations for each numeric value, then click 'Submit' to check your answer.")),
-                                h4(tags$li("If you got every question correct, then you can click 'Next Question' to move on your challenge, otherwise a part of body will be drawn on the image.")),
+                                h4(tags$li("If you got every question correct, then you can click
+                                           'Next Question' to move on your challenge, otherwise a part of body will be drawn on the image.")),
                                 h4(tags$li("You cannot revise your answer once you click 'Submit', so think carefully before submit.")),
                                 br(),
                                 div(style = "text-align:center",
-                                    bsButton("go", "GO!", icon("bolt"), size = "medium", style = "warning", class = "circle grow")),
+                                    bsButton("go",
+                                             label = "GO!",
+                                             icon("bolt"),
+                                             size = "medium",
+                                             style = "warning",
+                                             class = "circle grow")),
                                 br(),
                                 h3(strong("Acknowledgements:")),
                                 h4("This app was developed and coded by Zhiliang Zhang. Special thanks to Luxin Wang for helping some programming issues.")
@@ -107,7 +116,7 @@ ui <- dashboardPage(skin = "yellow",
                                 wellPanel(style = "background-color: #EAF2F8",
                                           
                                           uiOutput("question"),
-                                          tags$style(type='text/css', '#question {font-weight:bold;font-size: 20px;background-color: #EAF2F8;color: black;}')
+                                          tags$style(type ='text/css', '#question {font-weight:bold;font-size: 20px;background-color: #EAF2F8;color: black;}')
                                           
                                 ),
                                 
@@ -124,30 +133,26 @@ ui <- dashboardPage(skin = "yellow",
                                     #  bsButton('restart','RESTART',size = 'large', style = 'primary',disabled = TRUE)
                                     #),
                                     
-                                    fluidRow(
-                                      h3("Identify the measure association of the following numeric values: ")
-                                    ),
-                                    
-                                    fluidRow(uiOutput('box1'), selectInput('first',"",c("",'Relative Risk', 'Risk', 'Odds','Odds Ratio', "Probability"), width = '30%'),
+                                    fluidRow(h3("Identify the measure association of the following numeric values: ")),
+                                    fluidRow(uiOutput('box1'), selectInput('first', "", c("",'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
                                              uiOutput('mark1')),
-                                    fluidRow(uiOutput('box2'),selectInput('second',"",c("",'Relative Risk', 'Risk',  'Odds','Odds Ratio', "Probability"), width = '30%'),
+                                    fluidRow(uiOutput('box2'),selectInput('second', "", c("", 'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
                                              uiOutput('mark2')),
-                                    fluidRow(uiOutput('box3'),selectInput('third',"",c("",'Relative Risk', 'Risk',  'Odds','Odds Ratio', "Probability"), width = '30%'),
+                                    fluidRow(uiOutput('box3'),selectInput('third', "", c("", 'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
                                              uiOutput('mark3')),
-                                    fluidRow(uiOutput('box4'),selectInput('fourth',"",c("",'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
+                                    fluidRow(uiOutput('box4'),selectInput('fourth', "", c("", 'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
                                              uiOutput('mark4')),
                                     
                                     br(),
                                     br(),
                                     br(),
                                     
-                                    
-                                    
-                                    
+
                                     tags$head(tags$style(HTML("#result {font-weight:bold;}")))
                                     
                                     
                                   ),
+                                  
                                   mainPanel(
                                     
                                     br(),
@@ -161,20 +166,28 @@ ui <- dashboardPage(skin = "yellow",
                                     
                                     fluidRow(
                                       column(6, offset = 2,
-                                             uiOutput("distPlot",width = "100%"))),
+                                             uiOutput("distPlot", width = "100%"))),
                                     br(),
                                     br(),
                                     br(),
                                     fluidRow(
-                                      column(3, offset=2,
-                                             bsButton('nextq', "Next Question", size ="large", style="success",disabled=TRUE)),
+                                      column(3, offset = 2,
+                                             bsButton(inputId = 'nextq',
+                                                      label = "Next Question",
+                                                      size = "large",
+                                                      style = "success",
+                                                      disabled = TRUE)),
                                       column(3, 
-                                             bsButton('submit', "Submit", size= "large", style ="warning", disabled =FALSE)))
+                                             bsButton(inputId = 'submit',
+                                                      label = "Submit",
+                                                      size = "large",
+                                                      style = "warning",
+                                                      disabled = FALSE)))
                                     # bsPopover("distPlot", " ","Choose different measure of association for each numeric value, then click Submit to check your answer", place="left")
                                     
                                     
                                   ),
-                                  position ="left"
+                                  position = "left"
                                   
                                 )
                                 
