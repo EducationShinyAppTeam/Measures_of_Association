@@ -43,21 +43,22 @@ ui <- dashboardPage(skin = "yellow",
                                 h5("Ex) If a horse wins 1 out of every 5 races, its probability of winning is 1/5 (20%)."),
                                 br(),
                                 h3(tags$li("Risk & Relative Risk:")),
-                                h4("A risk is just a probability for a bad outcome, 
-                                   and the relative risk (RR) is the ratio of these chances for two groups 
-                                   (e.g. the risk of having a heart attack in the next five years for men divided by the same risk for women). 
-                                   So"), 
+                                h4("A risk is a probability of a bad outcome."),
+                                h5("Ex) If 35% of women's cars are stolen, the risk of a woman's car being stolen is 35%."),
+                                h4("Relative risk (RR) is the ratio of probabilities for two groups."), 
+                                h5("Ex) The risk of having a heart attack in the next five years for men divided by the same risk for women."), 
+                                h4("In essence:"), 
                                 tags$a(tags$img(src='rr.png', align = "center")),
                                 
                                 br(),
-                                h3(tags$li("Odds Ratio:")),
-                                h4("Odds compare events with the opposite event. 
-                                   If a horse wins 1 out of every 5 races, its odds of winning are 1 to 4 (expressed as 1:4) since it wins one race for every 4 it loses. 
-                                   An odds ratio  is the ratio of the odds for two groups 
-                                   (e.g. the odds for having a heart attack in the next five years for men divided by the corresponding odds for women).  
-                                   When data is displayed in a 2 x 2 table, 
-                                   the odds ratio is sometimes called the 'cross product ratio' as its estimate is calculated as the product of the values on one 
-                                   diagonal divided by the product of the values on the opposite diagonal."),
+                                h3(tags$li("Odds & Odds Ratio:")),
+                                h4("Odds compare events with the opposite event."), 
+                                h5("Ex) If a horse wins 1 out of every 5 races, its odds of winning are 1 to 4 (expressed as 1:4) since it wins one race for every 4 it loses."), 
+                                h4("An odds ratio  is the ratio of the odds for two groups."), 
+                                h5("Ex) the odds for having a heart attack in the next five years for men divided by the corresponding odds for women."),  
+                                #h4("When data is displayed in a 2 x 2 table, 
+                                #   the odds ratio is sometimes called the 'cross product ratio' as its estimate is calculated as the product of the values on one 
+                                #   diagonal divided by the product of the values on the opposite diagonal."),
                                 br(),
                                 
                                 
@@ -71,7 +72,7 @@ ui <- dashboardPage(skin = "yellow",
                                 br(),
                                 br(),
                                 h3(strong("About:")),
-                                h4("In this App, you will explore measures of associations and learn to distinguish probability, risk, relative risk, odds and odds ratio."),
+                                h4("In this App, you will explore measures of associations and test your ability to distinguish probability, risk, relative risk, odds and odds ratio."),
                                 br(),
                                 h3(strong("Instructions:")),
                                 h4(tags$li("You'll start this game with nothing on the gallows, once you have at least one answer wrong, a part of the body will be drawn, and if the whole little man is completely drawn, then you have lost this game.")),
