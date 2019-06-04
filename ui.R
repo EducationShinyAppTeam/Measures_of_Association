@@ -116,7 +116,7 @@ ui <- dashboardPage(skin = "yellow",
                                 wellPanel(style = "background-color: #EAF2F8",
                                           
                                           uiOutput("question"),
-                                          tags$style(type ='text/css', '#question {font-weight:bold;font-size: 20px;background-color: #EAF2F8;color: black;}')
+                                          tags$style(type = 'text/css', '#question {font-weight:bold;font-size: 20px;background-color: #EAF2F8;color: black;}')
                                           
                                 ),
                                 
