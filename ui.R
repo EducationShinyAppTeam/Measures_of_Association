@@ -36,12 +36,14 @@ ui <- dashboardPage(skin = "yellow",
                       tabItems( 
                         # Prerequiste Tab
                         tabItem(tabName = "prerequisite",
-                                h3(strong("Background: Measures of Association")),br(),
+                                h3(strong("Background: Measures of Association")),
+                                br(),
                                 h3(tags$li("Probability:")),
-                                h4("Probability is the likelihood of an event in relation to all possible events. If a horse wins 1 out of every 5 races, its probability of winning is 1/5 (20%)."),
+                                h4("Probability is the likelihood of an event in relation to all possible events."),
+                                h5("Ex) If a horse wins 1 out of every 5 races, its probability of winning is 1/5 (20%)."),
                                 br(),
                                 h3(tags$li("Risk & Relative Risk:")),
-                                h4("In simple terms, a risk is just a probability for a bad outcome, 
+                                h4("A risk is just a probability for a bad outcome, 
                                    and the relative risk (RR) is the ratio of these chances for two groups 
                                    (e.g. the risk of having a heart attack in the next five years for men divided by the same risk for women). 
                                    So"), 
