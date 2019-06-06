@@ -14,7 +14,7 @@ ui <- dashboardPage(skin = "yellow",
                     dashboardSidebar(
                       sidebarMenu(
                         id = "tabs",
-                        menuItem("Prerequiste", tabName = "prerequisite", icon = icon("book")),
+                        menuItem("Prerequisites", tabName = "prerequisite", icon = icon("book")),
                         menuItem("Overview", tabName = "overview", icon = icon("dashboard")),
                         menuItem("Challenge", tabName = "Hangman", icon = icon("cogs"))
                       )
@@ -76,7 +76,7 @@ ui <- dashboardPage(skin = "yellow",
                                 br(),
                                 br(),
                                 h3(strong("About:")),
-                                h4("In this App, you will explore measures of associations and test your ability to distinguish probability, risk, relative risk, odds and odds ratio."),
+                                h4("In this app, you will explore measures of associations and test your ability to distinguish probability, risk, relative risk, odds and odds ratio."),
                                 br(),
                                 h3(strong("Instructions:")),
                                 h4(tags$li("You'll start this game with nothing on the gallows, once you
