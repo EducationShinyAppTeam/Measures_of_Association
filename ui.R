@@ -91,7 +91,7 @@ ui <- dashboardPage(skin = "yellow",
                                     bsButton("go",
                                              label = "GO!",
                                              icon("bolt"),
-                                             size = "medium",
+                                             size = "large",
                                              style = "warning",
                                              class = "circle grow")),
                                 br(),
@@ -113,15 +113,15 @@ ui <- dashboardPage(skin = "yellow",
                                 titlePanel("Distinguish the Measure Associations"),
                                 
                                 
-                                wellPanel(style = "background-color: #fdf5c9",
+                                wellPanel(style = "background-color: #eaf2f8",
                                           
                                           uiOutput("question"),
-                                          tags$style(type = 'text/css', '#question {font-weight:bold;font-size: 20px;background-color: #fdf5c9;color: black;}')
+                                          tags$style(type = 'text/css', '#question {font-weight:bold;font-size: 20px; background-color: #eaf2f8; color: black;}')
                                           
                                 ),
                                 
                                 sidebarLayout(
-                                  sidebarPanel(div(style = "background-color: #fdf5c9",
+                                  sidebarPanel(div(style = "background-color: #eaf2f8",
                                     
                                     #wellPanel(style = "background-color: #EAF2F8",
                                     #          fluidRow(
