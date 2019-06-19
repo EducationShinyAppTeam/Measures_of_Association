@@ -70,16 +70,16 @@ shinyServer(function(session, input, output) {
     correct_answer <- as.matrix(bank[1:60,1])
     
     output$mark1 <- renderUI({
-      img(src = NULL,width = 30)
+      img(src = NULL,width = 20)
     })
     output$mark2 <- renderUI({
-      img(src = NULL,width = 30)
+      img(src = NULL,width = 20)
     })
     output$mark3 <- renderUI({
-      img(src = NULL,width = 30)
+      img(src = NULL,width = 20)
     })
     output$mark4 <- renderUI({
-      img(src = NULL,width = 30)
+      img(src = NULL,width = 20)
     })
     
     value$correct <- 0;

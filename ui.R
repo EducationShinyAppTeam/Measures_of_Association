@@ -110,18 +110,18 @@ ui <- dashboardPage(skin = "yellow",
                                 #div(style="display: inline-block;vertical-align:top;",
                                 #    circleButton("info",icon = icon("info"), status = "myClass",size = "xs")
                                 #),
-                                titlePanel("Distinguish the measure associations"),
+                                titlePanel("Distinguish the Measure Associations"),
                                 
                                 
-                                wellPanel(style = "background-color: #EAF2F8",
+                                wellPanel(style = "background-color: #fdf5c9",
                                           
                                           uiOutput("question"),
-                                          tags$style(type = 'text/css', '#question {font-weight:bold;font-size: 20px;background-color: #EAF2F8;color: black;}')
+                                          tags$style(type = 'text/css', '#question {font-weight:bold;font-size: 20px;background-color: #fdf5c9;color: black;}')
                                           
                                 ),
                                 
                                 sidebarLayout(
-                                  sidebarPanel(
+                                  sidebarPanel(div(style = "background-color: #fdf5c9",
                                     
                                     #wellPanel(style = "background-color: #EAF2F8",
                                     #          fluidRow(
@@ -133,14 +133,14 @@ ui <- dashboardPage(skin = "yellow",
                                     #  bsButton('restart','RESTART',size = 'large', style = 'primary',disabled = TRUE)
                                     #),
                                     
-                                    fluidRow(h3("Identify the measure association of the following numeric values: ")),
-                                    fluidRow(uiOutput('box1'), selectInput('first', "", c("Select Answer",'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
-                                             uiOutput('mark1')),
-                                    fluidRow(uiOutput('box2'),selectInput('second', "", c("Select Answer", 'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
+                                    fluidRow(h3("Identify the measure association of the following numeric values: "),
+                                             uiOutput('box1'), selectInput('first', "", c("Select Answer",'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
+                                             uiOutput('mark1'),
+                                             uiOutput('box2'),selectInput('second', "", c("Select Answer", 'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
                                              uiOutput('mark2')),
                                     fluidRow(uiOutput('box3'),selectInput('third', "", c("Select Answer", 'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
-                                             uiOutput('mark3')),
-                                    fluidRow(uiOutput('box4'),selectInput('fourth', "", c("Select Answer", 'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
+                                             uiOutput('mark3'),
+                                             uiOutput('box4'),selectInput('fourth', "", c("Select Answer", 'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
                                              uiOutput('mark4')),
                                     
                                     br(),
@@ -168,7 +168,7 @@ ui <- dashboardPage(skin = "yellow",
                                     tags$head(tags$style(HTML("#result {font-weight:bold;}")))
                                     
                                     
-                                  ),
+                                  )),
                                   
                                   mainPanel(
                                     
