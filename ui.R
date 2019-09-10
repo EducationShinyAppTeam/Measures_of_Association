@@ -133,7 +133,7 @@ ui <- dashboardPage(skin = "yellow",
                                     #  bsButton('restart','RESTART',size = 'large', style = 'primary',disabled = TRUE)
                                     #),
                                     
-                                    fluidRow(h3("Identify the measure association of the following numeric values: "),
+                                    fluidRow(h3("Choose the measure of association for the following: "),
                                              uiOutput('box1'), selectInput('first', "", c("Select Answer",'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
                                              uiOutput('mark1'),
                                              uiOutput('box2'),selectInput('second', "", c("Select Answer", 'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
