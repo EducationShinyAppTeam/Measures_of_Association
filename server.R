@@ -571,29 +571,29 @@ shinyServer(function(session, input, output) {
     
     ## Background
     if(value$mistake == 0){
-      img(src = "treegame1.jpg", width = 500)
+      img(src = "Cell01.jpg", width = 500)
       
     }
     
     ## Head
     else if(value$mistake == 1 ) {
-      img(src = "treegame2.jpg", width = 500)
+      img(src = "Cell02.jpg", width = 500)
     }
     
     ## Arms
     else if(value$mistake == 2) {
-      img(src = "treegame3.jpg", width = 500)
+      img(src = "Cell03.jpg", width = 500)
     }
     
     ## Body
     else if(value$mistake == 3 ) {
-      img(src = "treegame4.jpg", width = 500)
+      img(src = "Cell04.jpg", width = 500)
     }
     
     
     ## Legs
     else if(value$mistake == 4) {
-      img(src = "treegame5.jpg", width = 500)
+      img(src = "Cell05.jpg", width = 500)
     }
     
   })
