@@ -110,7 +110,7 @@ ui <- dashboardPage(skin = "yellow",
                                 #div(style="display: inline-block;vertical-align:top;",
                                 #    circleButton("info",icon = icon("info"), status = "myClass",size = "xs")
                                 #),
-                                titlePanel("Distinguish the Measure Associations"),
+                                titlePanel("Choose the Correct Measure of Association"),
                                 
                                 
                                 wellPanel(style = "background-color: #eaf2f8",
