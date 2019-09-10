@@ -113,15 +113,15 @@ ui <- dashboardPage(skin = "yellow",
                                 titlePanel("Choose the Correct Measure of Association"),
                                 
                                 
-                                wellPanel(style = "background-color: #eaf2f8",
+                                wellPanel(#style = "background-color: #eaf2f8",
                                           
                                           uiOutput("question"),
-                                          tags$style(type = 'text/css', '#question {font-weight:bold;font-size: 20px; background-color: #eaf2f8; color: black;}')
+                                          tags$style(type = 'text/css', '#question {font-weight:bold;font-size: 20px; color: black;}')
                                           
                                 ),
                                 
                                 sidebarLayout(
-                                  sidebarPanel(div(style = "background-color: #eaf2f8",
+                                  sidebarPanel(div(#style = "background-color: #eaf2f8",
                                     
                                     #wellPanel(style = "background-color: #EAF2F8",
                                     #          fluidRow(
