@@ -3,6 +3,7 @@ library(shiny)
 library(shinyjs)
 library(shinyBS)
 library(shinyWidgets)
+library(rlocker)
 
 ui <- dashboardPage(skin = "yellow",
                     dashboardHeader(title = "Measures of Association", titleWidth = 250,

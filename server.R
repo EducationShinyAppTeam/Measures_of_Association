@@ -4,12 +4,27 @@ library(shinyjs)
 library(shinyBS)
 library(plotrix)
 library(shinyWidgets)
+library(rlocker)
 
 bank <- read.csv("questionbank.csv")
 bank = data.frame(lapply(bank, as.character), stringsAsFactors = FALSE)
 
 
 shinyServer(function(session, input, output) {
+  
+  #Initialized learning  locker connection
+  connection <- rlocker::connect(session, list(
+    base_url = "https://learning-locker.stat.vmhost.psu.edu/",
+    auth = "Basic ZDQ2OTNhZWZhN2Q0ODRhYTU4OTFmOTlhNWE1YzBkMjQxMjFmMGZiZjo4N2IwYzc3Mjc1MzU3MWZkMzc1ZDliY2YzOTNjMGZiNzcxOThiYWU2",
+    agent = rlocker::createAgent()
+  ))
+  
+  # Setup demo app and user.
+  currentUser <- 
+    connection$agent
+  
+  if(connection$status != 200){
+  }
   
   observeEvent(input$info,{
     sendSweetAlert(
@@ -451,6 +466,9 @@ shinyServer(function(session, input, output) {
     }
   })
   
+  
+ 
+  
   observeEvent(input$submit,{ 
     
     output$mark1 <- renderUI({
@@ -563,6 +581,55 @@ shinyServer(function(session, input, output) {
       updateButton(session, "nextq", disabled = TRUE)
       updateButton(session, "restart", disabled = FALSE)
     }
+  })
+  
+  # Gets current page address from the current session
+  getCurrentAddress <- function(session){
+    return(paste0(
+      session$clientData$url_protocol, "//",
+      session$clientData$url_hostname,
+      session$clientData$url_pathname, ":",
+      session$clientData$url_port,
+      session$clientData$url_search
+    ))
+  }
+  
+  observeEvent(input$submit,{
+    value$box1= 4*value$index-3
+    value$box2= 4*value$index-2
+    value$box3= 4*value$index-1
+    value$box4= 4*value$index
+    statement <- rlocker::createStatement(
+      list(
+        verb = list(
+          display = "answered"
+        ),
+        object = list(
+          id = paste0(getCurrentAddress(session), "#", value$index),
+          name = paste('Question', value$index, ":", bank[value$index*4,5]),
+          description = paste(bank[value$box1,4], bank[value$box2,4], bank[value$box3,4], bank[value$box4,4], sep =";")
+        ),
+        result = list(
+          success = (any(input$first == correct_answer[value$box1,1])&&
+                       any(input$second == correct_answer[value$box2,1])&&
+                       any(input$third == correct_answer[value$box3,1])&&
+                       any(input$fourth == correct_answer[value$box4,1])),
+          completion = (any(input$first != 'Select Answer')&&
+                          any(input$second != 'Select Answer')&&
+                          any(input$third != 'Select Answer')&&
+                          any(input$fourth != 'Select Answer')),
+          response = paste(input$first, input$second, input$third, input$fourth, correct_answer[value$box1,1], correct_answer[value$box2,1], correct_answer[value$box3,1],correct_answer[value$box4,1], sep = ";"),
+          duration = value$correct/10
+          #the total questions number to reach win is 10, the duration is the percentage of correct answers/total 10
+        )
+      )
+    )
+    
+    # Store statement in locker and return status
+    status <- rlocker::store(session, statement)
+    
+    print(statement) # remove me
+    print(status) # remove me
   })
   
   ##### Draw the Hangman Game#####
