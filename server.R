@@ -36,7 +36,7 @@ shinyServer(function(session, input, output) {
   })
   observeEvent(input$nextbutton, {
     
-    updateTabItems(session, "tabs", "overview")
+    updateTabItems(session, "tabs", "prerequisite")
     
   })
   
