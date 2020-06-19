@@ -281,67 +281,13 @@ ui <- dashboardPage(
             br(),
             br()
             
-            # bsPopover("distPlot", " ","Choose different measure of association for each numeric value, then click Submit to check your answer", place="left")
-            
+
             
           ),
           position = "left"
           
         )
-        
-        
-        ####Previous Layout####
-        
-        # wellPanel(
-        #
-        #   fluidRow(
-        #     h3("Identify the measure association of the following numeric values: ")
-        #   ),
-        #
-        #   column(3,
-        #         selectInput('first',uiOutput('box1'),c('Relative Risk', 'Risk', 'Odds Ratio', "Probability")),
-        #         uiOutput('mark1')),
-        #   column(3,
-        #          selectInput('second',uiOutput('box2'),c('Relative Risk', 'Risk', 'Odds Ratio', "Probability")),
-        #          uiOutput('mark2')),
-        #   column(3,
-        #          selectInput('third',uiOutput('box3'),c('Relative Risk', 'Risk', 'Odds Ratio', "Probability")),
-        #          uiOutput('mark3') ),
-        #   column(3,
-        #          selectInput('fourth',uiOutput('box4'),c('Relative Risk', 'Risk', 'Odds Ratio', "Probability")),
-        #          uiOutput('mark4')),
-        #   # fluidRow(
-        #   #   column(4, offset= 7,
-        #   #    verbatimTextOutput("result")
-        #   #   )
-        #   # ),
-        #
-        # fluidRow(
-        # column(3, offset=7,
-        #          verbatimTextOutput("result"))),
-        #
-        # plotOutput("distPlot",width = "50%"),
-        #
-        #
-        # column(2, offset=6,
-        #        bsButton('nextq', "Next Question", size ="large", style="success",disabled=TRUE)),
-        # column(2, offset = 6,
-        #        bsButton('submit', "Submit", size= "large", style ="warning", disabled =FALSE)),
-        #
-        # tags$head(tags$style(HTML("#result {font-size: 18px;background-color:white}"))),
-        #
-        # bsPopover("disPlot", " ","Choose different measure of association for each numeric value, then click Submit to check your answer", place="right"),
-        #
-        # br(),
-        # br(),
-        # br(),
-        # br(),
-        # br()
-        #
-        #
-        #
-        # )
-        
+
         
       ),
       tabItem(
@@ -376,6 +322,16 @@ ui <- dashboardPage(
           "Chang, W., Cheng, J., Allaire, J., Xie, Y., and McPherson, J.
             (2019), shiny: Web application framework for R. (v1.4.0),
             [R Package]. Available from https://CRAN.R-project.org/package=shiny"
+        ),
+        p(     #plotrix
+          class = "hangingindent",
+          "Lemon, J., Bolker, B., Oom, S., Klein, E., Rowlingson, B., Wickham, H., Tyagi, A., Eterradossi, O.,
+          Grothendieck, G., Toews, M., Kane, J., Turner, R., Witthoft, C., Stander, J., Petzoldt, T., Duursma, R.,
+          Biancotto, E., Levy, O., Dutang, C., Solymos, P., Engelmann, R., Hecker, M., Steinbeck, F., Borchers, H.,
+          Singmann, H., Toal, T., Ogle, D., Baral, D., Groemping, U., and Venables, B., 
+            (2020), plotrix: Various Plotting Functions
+            (v3.7-8), [R package]. Available from
+            https://cran.r-project.org/web/packages/plotrix/index.html"
         ),
         p(     #shinyWidgets
           class = "hangingindent",

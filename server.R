@@ -4,36 +4,13 @@ library(shinyjs)
 library(shinyBS)
 library(plotrix)
 library(shinyWidgets)
-library(rlocker)
 
 bank <- read.csv("questionbank.csv")
 bank = data.frame(lapply(bank, as.character), stringsAsFactors = FALSE)
 
 
 shinyServer(function(session, input, output) {
-  
-  #Initialized learning  locker connection
-  connection <- rlocker::connect(session, list(
-    base_url = "https://learning-locker.stat.vmhost.psu.edu/",
-    auth = "Basic ZDQ2OTNhZWZhN2Q0ODRhYTU4OTFmOTlhNWE1YzBkMjQxMjFmMGZiZjo4N2IwYzc3Mjc1MzU3MWZkMzc1ZDliY2YzOTNjMGZiNzcxOThiYWU2",
-    agent = rlocker::createAgent()
-  ))
-  
-  # Setup demo app and user.
-  currentUser <- 
-    connection$agent
-  
-  if(connection$status != 200){
-  }
-  
-  observeEvent(input$info,{
-    sendSweetAlert(
-      session = session,
-      title = "Instructions:",
-      text = "Choose the Measure of Association in the dropdown menu with the number in the context described.",
-      type = "info"
-    )
-  })
+
   observeEvent(input$nextbutton, {
     
     updateTabItems(session, "tabs", "prerequisite")
