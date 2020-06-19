@@ -89,7 +89,7 @@ ui <- dashboardPage(
           br(),
           br(),
           br(),
-          div(class = "updated", "Last Update: 6/08/2020 by DHG.")
+          div(class = "updated", "Last Update: 6/19/2020 by DHG.")
          )
         ),
       
@@ -236,8 +236,6 @@ ui <- dashboardPage(
             br(),
             div(style = "text-align:left",
                 fluidRow(
-                  column(
-                    3,
                     bsButton(
                       inputId = 'submit',
                       label = "Submit",
@@ -245,19 +243,17 @@ ui <- dashboardPage(
                       style = "warning",
                       disabled = FALSE
                     )
-                  ),
-                  div(style = "text-align:left",
-                      column(
-                        3,
-                        bsButton(
-                          inputId = 'nextq',
-                          label = "Next Question",
-                          size = "large",
-                          style = "success",
-                          disabled = TRUE
-                        )
-                      ))
-                )),
+                 ), br(),
+                fluidRow(
+                    bsButton(
+                      inputId = 'nextq',
+                      label = "Next>>",
+                      size = "large",
+                      style = "success",
+                      disabled = TRUE
+                      )
+                  )
+                ),
             br(),
             br(),
             
