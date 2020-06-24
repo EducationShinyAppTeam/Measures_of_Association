@@ -23,8 +23,8 @@ ui <- dashboardPage(
     id = "tabs",
     menuItem("Overview", tabName = "overview", icon = icon("tachometer-alt")),
     menuItem("Prerequisites", tabName = "prerequisite", icon = icon("book")),
-    menuItem("Challenge", tabName = "Hangman", icon = icon("cogs")),
-    menuItem("Reference", tabName = "References", icon = icon("leanpub"))
+    menuItem("Game", tabName = "Hangman", icon = icon("gamepad")),
+    menuItem("References", tabName = "References", icon = icon("leanpub"))
                ),
     tags$div(class = "sidebar-logo",
              boastUtils::psu_eberly_logo("reversed"))
@@ -45,23 +45,25 @@ ui <- dashboardPage(
 
         h1("Measures of Association"),
         p(
-          "In this app, you will explore measures of associations and test your ability to distinguish probability, risk, relative risk, odds and odds ratio."
-        ),
+          "In this app, you will explore measures of association for two by two tables and test your ability to distinguish probability, risk, relative risk, odds and odds ratio."),
         br(),
         
         h2("Instructions"),
         tags$ol(
           tags$li(
-            "You'll start this game with nothing on the gallows, once you have at least one answer wrong, 
-            a part of the body will be drawn,and if the whole little man is completely drawn, 
-            then you have lost this game."
+            "Review the different quantities on the ", actionLink("link_to_preq", "Prerequisites"), "page."
+          ),
+          tags$li(
+            "You'll start the game with the man relaxing on top of the tree.
+             If you miss a problem, he will fall to the next branch.
+             You need to get ten questions right before he falls all the way to the ground."
                  ),
           tags$li(
-            "Choose different measure of associations for each numeric value, then click 'Submit' to check your answer."
+            "For each scenario provided, choose the measure that goes with the numerical value."
                  ),
           tags$li(
-            "If you got every question correct, then you can click
-                                           'Next Question' to move on your challenge, otherwise a part of body will be drawn on the image."
+            "If you get every question for the scenario correct then that counts toward your total of ten needed.
+             If you miss any then the man will drop down to the next branch."
                  ),
           tags$li(
             "You cannot revise your answer once you click 'Submit', so think carefully before submit."
@@ -72,8 +74,8 @@ ui <- dashboardPage(
           style = "text-align:center",
           bsButton(
             inputId = "nextbutton",
-            label = "Explore prerequisites",
-            icon("wpexplorer"),
+            label = "GO!",
+            icon("bolt"),
             size = "large",
             class = "circle grow"
           )
@@ -85,11 +87,11 @@ ui <- dashboardPage(
         h2("Acknowledgements"),
         p(
           "This app was developed and coded by Zhiliang Zhang and further updated by Daehoon Gwak.",br(),
-          "Special thanks to Luxin Wang for helping some programming issues.",
+          "Special thanks to Luxin Wang for helping with some programming issues.",
           br(),
           br(),
           br(),
-          div(class = "updated", "Last Update: 6/19/2020 by DHG.")
+          div(class = "updated", "Last Update: 6/22/2020 by DHG.")
          )
         ),
       
@@ -110,9 +112,7 @@ ui <- dashboardPage(
           p("Relative risk (RR) is the ratio of probabilities for two groups."),
           p("Ex) The risk of having a heart attack in the next five years for men divided by the same risk for women."),
           p("In essence:"),
-          #tags$a(tags$img(src = 'rr.png', align = "center")),   #update to mathjax
           p("\\[RR=\\frac{\\text{Risk for Group 1}}{\\text{Risk for Group 2}}\\]"),
-          br(),
           br(),
           h2(tags$li("Odds & Odds Ratio:")),
           p("Odds compare events with the opposite event."),
@@ -122,9 +122,6 @@ ui <- dashboardPage(
           p("Ex) the odds for having a heart attack in the next five years for
                                    men divided by the corresponding odds for women.")
         ),
-        #h4("When data is displayed in a 2 x 2 table,
-        #   the odds ratio is sometimes called the 'cross product ratio' as its estimate is calculated as the product of the values on one
-        #   diagonal divided by the product of the values on the opposite diagonal."),
         br(),
         div(
           style = "text-align:center",
@@ -138,7 +135,7 @@ ui <- dashboardPage(
         )
       ),
       
-      ## Third tab - Challenge Tab
+      ## Third tab - Game Tab
       tabItem(
         tabName = "Hangman",
         h2("Choose the Correct Measure of Association"),
@@ -146,146 +143,146 @@ ui <- dashboardPage(
         
         wellPanel(
           uiOutput("question"),
-          tags$style(
-            type = 'text/css',
-            '#question {font-weight:bold;font-size: 20px; color: black;}'
-          )
+          # tags$style(
+          #   type = 'text/css',
+          #   '#question {font-size: 20px; color: black;}'
+          # )
           
         ),
         
         sidebarLayout(
-          sidebarPanel(div(
-            #style = "background-color: #eaf2f8",
-            
-            #wellPanel(style = "background-color: #EAF2F8",
-            #          fluidRow(
-            #            uiOutput("result")
-            #          )),
-            #fluidRow(
-            
-            #  bsButton('reset','RELOAD', size = 'large', style = 'warning',disabled = TRUE),
-            #  bsButton('restart','RESTART',size = 'large', style = 'primary',disabled = TRUE)
-            #),
-            
+          # Four small questions to choose appropriate answer
+          sidebarPanel(
+            # style = "background-color: #eaf2f8",
+            # 
+            # wellPanel(style = "background-color: #EAF2F8",
+            #           fluidRow(
+            #             uiOutput("result")
+            #           )),
+            # fluidRow(
+            # 
+            #   bsButton('reset','RELOAD', size = 'large', style = 'warning',disabled = TRUE),
+            # ),
+
             fluidRow(
-              h3("Choose the measure of association for the following: "),
-              uiOutput('box1'),
-              selectInput(
-                'first',
-                "",
-                c(
-                  "Select Answer",
-                  'Relative Risk',
-                  'Risk',
-                  'Odds',
-                  'Odds Ratio',
-                  "Probability"
-                ),
-                width = '30%'
+            p("Choose appropriate answers", style = 'text-align:center'),
+            ), br(),
+            
+            uiOutput('box1'),
+            div(selectInput(
+              inputId = 'first',
+              "",
+              c(
+                "Select Answer",
+                'Relative Risk',
+                'Risk',
+                'Odds',
+                'Odds Ratio',
+                "Probability"
               ),
-              uiOutput('mark1'),
-              uiOutput('box2'),
-              selectInput(
-                'second',
-                "",
-                c(
-                  "Select Answer",
-                  'Relative Risk',
-                  'Risk',
-                  'Odds',
-                  'Odds Ratio',
-                  "Probability"
-                ),
-                width = '30%'
-              ),
-              uiOutput('mark2')
-            ),
-            fluidRow(
-              uiOutput('box3'),
-              selectInput(
-                'third',
-                "",
-                c(
-                  "Select Answer",
-                  'Relative Risk',
-                  'Risk',
-                  'Odds',
-                  'Odds Ratio',
-                  "Probability"
-                ),
-                width = '30%'
-              ),
-              uiOutput('mark3'),
-              uiOutput('box4'),
-              selectInput(
-                'fourth',
-                "",
-                c(
-                  "Select Answer",
-                  'Relative Risk',
-                  'Risk',
-                  'Odds',
-                  'Odds Ratio',
-                  "Probability"
-                ),
-                width = '30%'
-              ),
-              uiOutput('mark4')
-            ),
+              width = '45%'
+            ), style = 'margin-top:-29px;'),
+            div(uiOutput('mark1'), style = 'position:absolute;top:21%;left:48%;'),
             
             br(),
-            div(style = "text-align:left",
-                fluidRow(
-                    bsButton(
-                      inputId = 'submit',
-                      label = "Submit",
-                      size = "large",
-                      style = "warning",
-                      disabled = FALSE
-                    )
-                 ), br(),
-                fluidRow(
-                    bsButton(
-                      inputId = 'nextq',
-                      label = "Next>>",
-                      size = "large",
-                      style = "success",
-                      disabled = TRUE
-                      )
-                  )
-                ),
+            uiOutput('box2'),
+            div(selectInput(
+              'second',
+              "",
+              c(
+                "Select Answer",
+                'Relative Risk',
+                'Risk',
+                'Odds',
+                'Odds Ratio',
+                "Probability"
+              ),
+              width = '45%'
+            ), style = 'margin-top:-29px;'),
+            div(uiOutput('mark2'), style = 'position:absolute;top:41%;left:48%;'),
+            
+            
             br(),
+            uiOutput('box3'),
+            div(selectInput(
+              'third',
+              "",
+              c(
+                "Select Answer",
+                'Relative Risk',
+                'Risk',
+                'Odds',
+                'Odds Ratio',
+                "Probability"
+              ),
+              width = '45%'
+            ), style = 'margin-top:-29px;'),
+            div(uiOutput('mark3'), style = 'position:absolute;top:60%;left:48%;'),
+            
             br(),
-            
-            
-            tags$head(tags$style(HTML(
-              "#result {font-weight:bold;}"
-            )))
-            
-            
-          )),
+            uiOutput('box4'),
+            div(selectInput(
+              'fourth',
+              "",
+              c(
+                "Select Answer",
+                'Relative Risk',
+                'Risk',
+                'Odds',
+                'Odds Ratio',
+                "Probability"
+              ),
+              width = '45%'
+            ), style = 'margin-top:-29px;'),
+            div(uiOutput('mark4'), style = 'position:absolute;top:80%;left:48%;'),
+            br(),
+            # tags$head(tags$style(HTML(
+            #   "#result {font-weight:bold;}"
+            # )))
+          ),
           
           mainPanel(
-            br(),
-            
-            fluidRow(uiOutput("correct", align = 'center')),
-            
-            br(),
-            br(),
-            
-            fluidRow(column(
-              6, offset = 2,
-              uiOutput("distPlot", width = "100%")
-            )),
-            br(),
-            br(),
-            br()
-            
-
-            
+            fluidRow(uiOutput("correct", align = 'center'),
+              div(uiOutput("distPlot", width = "100%"), style = 'text-align:center')
+              )
+            )
           ),
-          position = "left"
-          
+        
+            fluidRow(
+              column(1,
+              bsButton(
+                inputId = 'submit',
+                label = "Submit",
+                size = "large",
+                style = "warning",
+                disabled = FALSE
+              )
+            ),
+            column(1, offset = 4,
+                   bsButton(
+                     'restart',
+                     'Re-attempt',
+                     size = 'large',
+                     style = "danger",
+                     disabled = TRUE
+                     )
+            ),
+            column(1, offset = 4,
+              bsButton(
+                inputId = 'nextq',
+                label = "Next>>",
+                size = "large",
+                disabled = TRUE
+              )
+              # ,bsButton(
+              #   'reset',
+              #   'RESET',
+              #   size = 'large',
+              #   style = "danger",
+              #   disabled = TRUE
+              # )
+            )
+            , br(), br(), br(), br()
         )
 
         
