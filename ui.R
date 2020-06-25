@@ -1,10 +1,9 @@
 library(shinydashboard)
 library(shiny)
-library(shinyjs)
 library(shinyBS)
-library(shinyWidgets)
+library(shinyWidgets) #for 'sendSweetAlert' function
 library(boastUtils)
-
+#Let`s begin
 ui <- dashboardPage(
   skin = "yellow",
   dashboardHeader(
@@ -16,7 +15,6 @@ ui <- dashboardPage(
              icon("home"))
     )
   ),
-  
   dashboardSidebar(
     width = 250,
     sidebarMenu(
@@ -29,25 +27,20 @@ ui <- dashboardPage(
     tags$div(class = "sidebar-logo",
              boastUtils::psu_eberly_logo("reversed"))
     ),
-  
   dashboardBody(
     tags$head(
       tags$link(rel = "stylesheet", type = "text/css",
                 href = "https://educationshinyappteam.github.io/Style_Guide/theme/boast.css")
-      
-    ),
-    
+      ),
     tabItems(
-    
       ##First tab - Overview Tab
       tabItem(
         tabName = "overview",
-
         h1("Measures of Association"),
         p(
-          "In this app, you will explore measures of association for two by two tables and test your ability to distinguish probability, risk, relative risk, odds and odds ratio."),
+          "In this app, you will explore measures of association for two by two tables 
+          and test your ability to distinguish probability, risk, relative risk, odds and odds ratio."),
         br(),
-        
         h2("Instructions"),
         tags$ol(
           tags$li(
@@ -76,25 +69,22 @@ ui <- dashboardPage(
             inputId = "nextbutton",
             label = "GO!",
             icon("bolt"),
-            size = "large",
-            class = "circle grow"
+            size = "large"
           )
         ),
-        
         #Acknowledgements
         br(),
         br(),
         h2("Acknowledgements"),
         p(
-          "This app was developed and coded by Zhiliang Zhang and further updated by Daehoon Gwak.",br(),
-          "Special thanks to Luxin Wang for helping with some programming issues.",
+          "This app was developed and coded by Zhiliang Zhang and further updated by Daehoon Gwak.
+          Special thanks to Luxin Wang for helping with some programming issues.",
           br(),
           br(),
           br(),
           div(class = "updated", "Last Update: 6/22/2020 by DHG.")
          )
         ),
-      
       ##Second tab - Prerequiste Tab
       tabItem(
         withMathJax(),
@@ -102,25 +92,36 @@ ui <- dashboardPage(
         h2("Prerequisites"),
         br(),
         tags$ol(
-          h2(tags$li("Probability")),
-          p("Probability is the likelihood of an event in relation to all possible events."),
-          p("Ex) If a horse wins 1 out of every 5 races, its probability of winning is 1/5 (20%)."),
+          tags$li("Probability"),
+          p("Probability is the long-run relative frequency of a particular data even occurring, 
+            given our assumptions about a repeatable process."),
+          p("For example, if we were to imagine running a lottery to pick a US citizen,
+            the probability of pecking a female is 50.8%. 
+            Thus, 50.8% of the time we repeat carrying out this lottery 
+            (always starting from the same initial population), we will pick a female. 
+            (Note: we won't pick the exact same person each time.)"),
           br(),
-          h2(tags$li("Risk & Relative Risk")),
-          p("A risk is a probability of a bad outcome."),
-          p("Ex) If 1% of women's cars are stolen, the risk of a woman's car being stolen is 1 out of 100."),
-          p("Relative risk (RR) is the ratio of probabilities for two groups."),
-          p("Ex) The risk of having a heart attack in the next five years for men divided by the same risk for women."),
-          p("In essence:"),
-          p("\\[RR=\\frac{\\text{Risk for Group 1}}{\\text{Risk for Group 2}}\\]"),
+          tags$li("Risk"),
+          p("Risk refers to the probability of a data event that we view as being negative, undesirable, or 'bad'."),
+          p("For example, the lifetime risk of developing skin cancer is about 2.6% (1/38) for white Americans. 
+            Thus, we if imagine a process of picking white Americans and observing their lifetimes, 
+            2.6% of the time we will pick an individual who will develop skin cancer."),
           br(),
-          h2(tags$li("Odds & Odds Ratio:")),
-          p("Odds compare events with the opposite event."),
-          p("Ex) If a horse wins 1 out of every 5 races, its odds of winning are 1 to 4
-                                   (expressed as 1:4) since it wins one race for every 4 it loses."),
-          p("An odds ratio  is the ratio of the odds for two groups."),
-          p("Ex) the odds for having a heart attack in the next five years for
-                                   men divided by the corresponding odds for women.")
+          tags$li("Relative Risk"),
+          p("Relative Risk (RR) is the ratio of two groups' risk (probability) for a particular data event. 
+            We often calculate relative risk through the formula 
+            \\[RR=\\frac{\\text{Risk for Group 1}}{\\text{Risk for Group 2}}\\]"),
+          p("For example, the relative risk of skin cancer for a white American is 
+            \\(2.6\\%/0.1\\% = 0.0026/0.001 = 26\\) times as large as Black Americans."),
+          br(),
+          tags$li("Odds & Odds Ratio"),
+          p("Odds, often expressed as a ratio called an Odds Ratio, compares the probability a data event 
+            happen with the probability of the same event not happen (i.e., the complement)."),
+          p("The odds ratio of a white American getting skin cancer is \\(\\frac{2.6}{100-2.6}\\approx 0.0267\\). 
+             Thus, the probability (risk) of a white American getting skin cancer is 0.0267 times 
+            as large as the probability of them not getting skin cancer. 
+            Put another way, we can say that the odds of a white American getting skin cancer is 1 to 37. 
+            The odds of a black American getting skin cancer are 1 to 999.")
         ),
         br(),
         div(
@@ -129,45 +130,21 @@ ui <- dashboardPage(
             inputId = "go",
             label = "GO!",
             icon("bolt"),
-            size = "large",
-            class = "circle grow"
+            size = "large"
           )
         )
       ),
-      
       ## Third tab - Game Tab
       tabItem(
         tabName = "Hangman",
         h2("Choose the Correct Measure of Association"),
-        
-        
-        wellPanel(
-          uiOutput("question"),
-          # tags$style(
-          #   type = 'text/css',
-          #   '#question {font-size: 20px; color: black;}'
-          # )
-          
-        ),
-        
-        sidebarLayout(
+        uiOutput("question"),
           # Four small questions to choose appropriate answer
-          sidebarPanel(
-            # style = "background-color: #eaf2f8",
-            # 
-            # wellPanel(style = "background-color: #EAF2F8",
-            #           fluidRow(
-            #             uiOutput("result")
-            #           )),
-            # fluidRow(
-            # 
-            #   bsButton('reset','RELOAD', size = 'large', style = 'warning',disabled = TRUE),
-            # ),
-
             fluidRow(
+              column(4,
+                     wellPanel(
             p("Choose appropriate answers", style = 'text-align:center'),
-            ), br(),
-            
+            br(),
             uiOutput('box1'),
             div(selectInput(
               inputId = 'first',
@@ -179,11 +156,9 @@ ui <- dashboardPage(
                 'Odds',
                 'Odds Ratio',
                 "Probability"
-              ),
-              width = '45%'
+              ), width = '90%'
             ), style = 'margin-top:-29px;'),
-            div(uiOutput('mark1'), style = 'position:absolute;top:21%;left:48%;'),
-            
+            div(uiOutput('mark1'), style = 'position:absolute;top:21%;right:8%;'),
             br(),
             uiOutput('box2'),
             div(selectInput(
@@ -196,12 +171,9 @@ ui <- dashboardPage(
                 'Odds',
                 'Odds Ratio',
                 "Probability"
-              ),
-              width = '45%'
+              ), width = '90%'
             ), style = 'margin-top:-29px;'),
-            div(uiOutput('mark2'), style = 'position:absolute;top:41%;left:48%;'),
-            
-            
+            div(uiOutput('mark2'), style = 'position:absolute;top:41%;right:8%;'),
             br(),
             uiOutput('box3'),
             div(selectInput(
@@ -214,11 +186,9 @@ ui <- dashboardPage(
                 'Odds',
                 'Odds Ratio',
                 "Probability"
-              ),
-              width = '45%'
+              ), width = '90%'
             ), style = 'margin-top:-29px;'),
-            div(uiOutput('mark3'), style = 'position:absolute;top:60%;left:48%;'),
-            
+            div(uiOutput('mark3'), style = 'position:absolute;top:60%;right:8%;'),
             br(),
             uiOutput('box4'),
             div(selectInput(
@@ -231,23 +201,16 @@ ui <- dashboardPage(
                 'Odds',
                 'Odds Ratio',
                 "Probability"
-              ),
-              width = '45%'
+              ), width = '90%'
             ), style = 'margin-top:-29px;'),
-            div(uiOutput('mark4'), style = 'position:absolute;top:80%;left:48%;'),
+            div(uiOutput('mark4'), style = 'position:absolute;top:80%;right:8%;'),
             br(),
-            # tags$head(tags$style(HTML(
-            #   "#result {font-weight:bold;}"
-            # )))
-          ),
-          
-          mainPanel(
-            fluidRow(uiOutput("correct", align = 'center'),
-              div(uiOutput("distPlot", width = "100%"), style = 'text-align:center')
-              )
+          )),
+          column(8, 
+            uiOutput("correct", align = 'center'),
+              div(uiOutput("scoreTree", width = "100%"), style = 'text-align:center')
             )
           ),
-        
             fluidRow(
               column(1,
               bsButton(
@@ -270,32 +233,17 @@ ui <- dashboardPage(
             column(1, offset = 4,
               bsButton(
                 inputId = 'nextq',
-                label = "Next>>",
+                label = "Next >>",
                 size = "large",
                 disabled = TRUE
               )
-              # ,bsButton(
-              #   'reset',
-              #   'RESET',
-              #   size = 'large',
-              #   style = "danger",
-              #   disabled = TRUE
-              # )
             )
-            , br(), br(), br(), br()
+            , br(), br(), br()
         )
-
-        
       ),
       tabItem(
         tabName = "References",
         h2("References"),
-        p(     #shinyjs
-          class = "hangingindent",
-          "Attali, D. (2020), Easily Improve the User Experience of Your Shiny Apps in Seconds.
-            (v1.1), [R package]. Available from
-            https://cran.r-project.org/web/packages/shinyjs/shinyjs.pdf"
-        ),
         p(     #shinyBS
           class = "hangingindent",
           "Bailey, E. (2015), shinyBS: Twitter bootstrap components for shiny.
@@ -320,15 +268,10 @@ ui <- dashboardPage(
             (2019), shiny: Web application framework for R. (v1.4.0),
             [R Package]. Available from https://CRAN.R-project.org/package=shiny"
         ),
-        p(     #plotrix
+        p(     #skin cancer
           class = "hangingindent",
-          "Lemon, J., Bolker, B., Oom, S., Klein, E., Rowlingson, B., Wickham, H., Tyagi, A., Eterradossi, O.,
-          Grothendieck, G., Toews, M., Kane, J., Turner, R., Witthoft, C., Stander, J., Petzoldt, T., Duursma, R.,
-          Biancotto, E., Levy, O., Dutang, C., Solymos, P., Engelmann, R., Hecker, M., Steinbeck, F., Borchers, H.,
-          Singmann, H., Toal, T., Ogle, D., Baral, D., Groemping, U., and Venables, B., 
-            (2020), plotrix: Various Plotting Functions
-            (v3.7-8), [R package]. Available from
-            https://cran.r-project.org/web/packages/plotrix/index.html"
+          " Key Statistics for Melanoma Skin Cancer (n.d.), Available from
+          https://www.cancer.org/cancer/melanoma-skin-cancer/about/key-statistics.html"
         ),
         p(     #shinyWidgets
           class = "hangingindent",
@@ -338,9 +281,6 @@ ui <- dashboardPage(
             https://cran.r-project.org/web/packages/shinyWidgets/index.html"
         )
       )
-      
     )
-    
   )
-  
 )
