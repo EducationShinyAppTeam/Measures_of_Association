@@ -3,6 +3,7 @@ library(shiny)
 library(shinyBS)
 library(shinyWidgets) #for 'sendSweetAlert' function
 library(boastUtils)
+#library(rlocker) #this is for future work when we get announcement from the instructor
 #Let`s begin
 ui <- dashboardPage(
   skin = "yellow",
@@ -82,12 +83,13 @@ ui <- dashboardPage(
         br(),
         h2("Acknowledgements"),
         p(
-          "This app was developed and coded by Zhiliang Zhang and further updated by Daehoon Gwak.
+          "This app was originally developed and coded by Zhiliang Zhang. The app was further updated 
+          by Daehoon Gwak in June 2020.
           Special thanks to Luxin Wang for helping with some programming issues.",
           br(),
           br(),
           br(),
-          div(class = "updated", "Last Update: 6/26/2020 by DHG.")
+          div(class = "updated", "Last Update: 6/26/2020 by DG.")
          )
         ),
       ##Second tab - Prerequiste Tab
