@@ -48,20 +48,25 @@ ui <- dashboardPage(
           ),
           tags$li(
             "You'll start the game with the man relaxing on top of the tree.
-             If you miss a problem, he will fall to the next branch.
-             You need to get ten questions right before he falls all the way to the ground."
+             If you miss a question, he will fall to the next branch.
+             You need to get ten scenarios right before he falls all the way to the ground."
                  ),
           tags$li(
             "For each scenario provided, choose the measure that goes with the numerical value."
                  ),
           tags$li(
             "If you get every question for the scenario correct then that counts toward your total of ten needed.
-             If you miss any then the man will drop down to the next branch."
+             If you miss any, then the man will drop down to the next branch."
                  ),
           tags$li(
-            "You cannot revise your answer once you click 'Submit', so think carefully before submit."
-                 )
-              ),
+            "If you miss all questions on the scenario, you cannot proceed to the next scenario and
+             you have to click 'Re-attempt' button to try again that scenario."
+                 ),
+          tags$li(
+            "If you miss all chances, the man falls to the ground, and you can click 'RESET' button
+            to play again. Remember, you have 4 chances!"
+          )
+          ),
         br(),
         div(
           style = "text-align:center",
@@ -82,7 +87,7 @@ ui <- dashboardPage(
           br(),
           br(),
           br(),
-          div(class = "updated", "Last Update: 6/22/2020 by DHG.")
+          div(class = "updated", "Last Update: 6/26/2020 by DHG.")
          )
         ),
       ##Second tab - Prerequiste Tab
@@ -208,7 +213,7 @@ ui <- dashboardPage(
           )),
           column(8, 
             uiOutput("correct", align = 'center'),
-              div(uiOutput("scoreTree", width = "100%"), style = 'text-align:center')
+              div(uiOutput("scoreTree"), align = 'center')
             )
           ),
             fluidRow(
@@ -236,9 +241,14 @@ ui <- dashboardPage(
                 label = "Next >>",
                 size = "large",
                 disabled = TRUE
+              ),
+              bsButton(
+                inputId = 'reset',
+                label = "RESET",
+                size = "large",
+                disabled = TRUE
               )
-            )
-            , br(), br(), br()
+            ),br()
         )
       ),
       tabItem(

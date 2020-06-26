@@ -6,17 +6,25 @@ shinyServer(function(session, input, output) {
     observeEvent(input$nextbutton, {
     updateTabItems(session, "tabs", "prerequisite")
     })
+  
   observeEvent(input$link_to_preq, {
     updateTabItems(session, "tabs", "prerequisite")
   })
+  
   observeEvent(input$go, {
     updateTabItems(session, "tabs", "Hangman")
   })
+  
+  observeEvent(input$end, {
+    updateTabItems(session, "tabs", "References")
+  })
+  
   observeEvent(input$submit, {
     updateButton(session, "nextq", disabled = FALSE)
     updateButton(session, "submit", disabled = TRUE)
     updateButton(session, "restart", disabled = FALSE)
   })
+  
   observeEvent(input$nextq, {
     updateButton(session, "submit", disabled = FALSE)
     updateButton(session, "nextq", disabled = TRUE)
@@ -60,6 +68,10 @@ shinyServer(function(session, input, output) {
     updateButton(session, "submit", disabled = FALSE)
     updateButton(session, "restart",disable =TRUE)
     updateButton(session, "nextq", disabled = TRUE)
+    updateButton(session, "reset", disabled = TRUE)
+    # removeUI(selector='#reset', immediate=TRUE)
+    # insertUI(selector='#nextq',immediate = TRUE)
+    # autoDestroy=TRUE
 
     updateSelectInput(session, "first","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
     updateSelectInput(session, "second","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
@@ -85,7 +97,7 @@ shinyServer(function(session, input, output) {
   value <- reactiveValues(index =  15, mistake = 0, correct = 0)
   correct_answer <- as.matrix(bank[1:60,1])
   index_list<-reactiveValues(list=sample(1:14,14,replace=FALSE))
-  ## start challenge=
+  ## start challenge
   observeEvent(input$go | input$Hangman,{
     value$index <- 15 #15th question on question bank
     correct_answer <- as.matrix(bank[1:60,1])
@@ -122,11 +134,11 @@ shinyServer(function(session, input, output) {
   })
   # UI for score
   output$correct <- renderUI({
-    p("Number of correct answers:" ,"", value$correct, " out of 10")
+    p("Number of completed scenarios:" ,"", value$correct, " out of 10")
   })
   observeEvent(input$submit,{
     output$correct <- renderUI({
-      p("Number of correct answers: " ,"", value$correct, " out of 10" )
+      p("Number of completed scenarios: " ,"", value$correct, " out of 10" )
     })
   })
   #### Questions
@@ -413,8 +425,12 @@ shinyServer(function(session, input, output) {
     {
       value$mistake <- value$mistake + 1
     }
+    # when user gets all scenarios wrong, then the user has to reset the game.
     if(value$mistake == 4){
       updateButton(session, "restart", disabled = TRUE)
+      updateButton(session, "submit", disabled = TRUE)
+      updateButton(session, "nextq", disabled = TRUE)
+      updateButton(session, "reset", disabled = FALSE)
     }
   })
   #####################Counting Correct answers##############
@@ -426,11 +442,20 @@ shinyServer(function(session, input, output) {
        any(input$fourth == correct_answer[value$box4,1]))
     {
       value$correct <- value$correct + 1
+      updateButton(session, "restart", disabled = TRUE)
+    }
+    # when the user gets all wrong sub questions, then next button is disabled
+    if(any(input$first != correct_answer[value$box1,1])&&
+       any(input$second != correct_answer[value$box2,1])&&
+       any(input$third != correct_answer[value$box3,1])&&
+       any(input$fourth != correct_answer[value$box4,1]))
+    {
+      updateButton(session, "nextq", disabled = TRUE)
     }
     if(value$correct == 10){
       confirmSweetAlert(
         session = session,
-        inputId = "reset",
+        inputId = "end",
         title = "Well Done!",
         type = "success",
         text = p("You have completed this challenge! Thank you for saving this poor little man!"),
@@ -440,6 +465,7 @@ shinyServer(function(session, input, output) {
       removeUI(selector='#submit', immediate=TRUE)
       removeUI(selector='#nextq', immediate=TRUE)
       removeUI(selector='#restart', immediate=TRUE)
+      removeUI(selector='#reset', immediate=TRUE)
       autoDestroy=TRUE
     }
   })
@@ -486,42 +512,28 @@ shinyServer(function(session, input, output) {
     # Store statement in locker and return status
     status <- rlocker::store(session, statement)
   })
-  # reset when the user misses all chances
-  observeEvent(input$nextq, {
-    if (value$mistake == 4) {
-      confirmSweetAlert(
-        session = session,
-        inputId = "reset",
-        title = "FAIL",
-        type = "warning",
-        text = p("You made this little poor man fail to enjoy his nap!
-          Go back and try again!"),
-        btn_labels = "Re-try",
-        btn_colors = "orange"
-      )
-      }})
   
   ##### Draw the Hangman Game#####
   output$scoreTree <- renderUI({
     ## Background
     if(value$mistake == 0){
-      img(src = "Cell01.jpg", width = 550)
+      img(src = "Cell01.jpg", height = '530px', width = '100%')
     }
     ## Head
     else if(value$mistake == 1 ) {
-      img(src = "Cell02.jpg", width = 550)
+      img(src = "Cell02.jpg", height = '530px', width = '100%')
     }
     ## Arms
     else if(value$mistake == 2) {
-      img(src = "Cell03.jpg", width = 550)
+      img(src = "Cell03.jpg", height = '530px', width = '100%')
     }
     ## Body
     else if(value$mistake == 3 ) {
-      img(src = "Cell04.jpg", width = 550)
+      img(src = "Cell04.jpg", height = '530px', width = '100%')
     }
     ## Legs
     else if(value$mistake == 4) {
-      img(src = "Cell05.jpg", width = 550)
-    }
+      img(src = "Cell05.jpg", height = '530px', width = '100%')
+      }
   })
 })
