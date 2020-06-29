@@ -3,7 +3,19 @@ library(boastUtils)
 bank <- read.csv("questionbank.csv")
 bank = data.frame(lapply(bank, as.character), stringsAsFactors = FALSE)
 shinyServer(function(session, input, output) {
-    observeEvent(input$nextbutton, {
+  observeEvent(input$info,{
+    sendSweetAlert(
+      session = session,
+      title = "Instructions:",
+      text = tags$ol(
+      tags$li("You need to find appropriate measure that goes with the numerical value."),
+      tags$li("You have 4 chances to save the poor little man and you need to get 10 scenarios correct."),
+      tags$li("Remember, if you miss any question on the scenario, then the man will drop down to the next branch.")
+      ),
+      type = "info"
+    )
+  })
+  observeEvent(input$nextbutton, {
     updateTabItems(session, "tabs", "prerequisite")
     })
   
@@ -26,22 +38,22 @@ shinyServer(function(session, input, output) {
   })
   
   observeEvent(input$nextq, {
-    updateButton(session, "submit", disabled = FALSE)
-    updateButton(session, "nextq", disabled = TRUE)
-    updateButton(session, "restart", disabled = TRUE)
-    updateSelectInput(session, "first","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "second","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "third","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "fourth","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
+    updateButton(session, 'submit', disabled = FALSE)
+    updateButton(session, 'nextq', disabled = TRUE)
+    updateButton(session, 'restart', disabled = TRUE)
+    updateSelectInput(session, 'first','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
+    updateSelectInput(session, 'second','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
+    updateSelectInput(session, 'third','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
+    updateSelectInput(session, 'fourth','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
   })
   #### Restart button
   observeEvent(input$restart,{
-    updateButton(session, "submit", disabled = FALSE)
-    updateButton(session, "restart",disable =TRUE)
-    updateSelectInput(session, "first","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "second","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "third","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "fourth","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
+    updateButton(session, 'submit', disabled = FALSE)
+    updateButton(session, 'restart',disable =TRUE)
+    updateSelectInput(session, 'first','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
+    updateSelectInput(session, 'second','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
+    updateSelectInput(session, 'third','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
+    updateSelectInput(session, 'fourth','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
     output$mark1 <- renderUI({
       img(src = NULL,width = 20)
     })
@@ -73,10 +85,10 @@ shinyServer(function(session, input, output) {
     # insertUI(selector='#nextq',immediate = TRUE)
     # autoDestroy=TRUE
 
-    updateSelectInput(session, "first","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "second","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "third","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "fourth","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
+    updateSelectInput(session, 'first','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
+    updateSelectInput(session, 'second','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
+    updateSelectInput(session, 'third','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
+    updateSelectInput(session, 'fourth','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
 
     output$mark1 <- renderUI({
       img(src = NULL,width = 30)
@@ -99,9 +111,9 @@ shinyServer(function(session, input, output) {
   index_list<-reactiveValues(list=sample(1:14,14,replace=FALSE))
   ## start challenge
   observeEvent(input$go | input$Hangman,{
-    value$index <- 15 #15th question on question bank
+    value$index <- 15 #15th scenario on question bank
     correct_answer <- as.matrix(bank[1:60,1])
-    value$box1= 4*value$index-3
+    value$box1= 4*value$index-3 #60th question -3, so that is the first question on 15th scenario
     value$box2= 4*value$index-2
     value$box3= 4*value$index-1
     value$box4= 4*value$index

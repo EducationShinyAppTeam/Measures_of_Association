@@ -10,6 +10,8 @@ ui <- dashboardPage(
   dashboardHeader(
     titleWidth = 250,
     title = "Measures of Association",
+    tags$li(class = "dropdown",
+            actionLink("info",icon("info",class = "myClass"))),
     tags$li(
       class = "dropdown",
       tags$a(href = "https://shinyapps.science.psu.edu/",
@@ -89,7 +91,7 @@ ui <- dashboardPage(
           br(),
           br(),
           br(),
-          div(class = "updated", "Last Update: 6/26/2020 by DG.")
+          div(class = "updated", "Last Update: 6/29/2020 by DG.")
          )
         ),
       ##Second tab - Prerequiste Tab
@@ -100,13 +102,12 @@ ui <- dashboardPage(
         br(),
         tags$ol(
           tags$li("Probability"),
-          p("Probability is the long-run relative frequency of a particular data even occurring, 
+          p("Probability is the long-run relative frequency of a particular data event occurring, 
             given our assumptions about a repeatable process."),
           p("For example, if we were to imagine running a lottery to pick a US citizen,
-            the probability of pecking a female is 50.8%. 
+            the probability of picking a female is 50.8%. 
             Thus, 50.8% of the time we repeat carrying out this lottery 
-            (always starting from the same initial population), we will pick a female. 
-            (Note: we won't pick the exact same person each time.)"),
+            (always starting from the same initial population), we will pick a female."),
           br(),
           tags$li("Risk"),
           p("Risk refers to the probability of a data event that we view as being negative, undesirable, or 'bad'."),
@@ -121,14 +122,23 @@ ui <- dashboardPage(
           p("For example, the relative risk of skin cancer for a white American is 
             \\(2.6\\%/0.1\\% = 0.0026/0.001 = 26\\) times as large as Black Americans."),
           br(),
-          tags$li("Odds & Odds Ratio"),
-          p("Odds, often expressed as a ratio called an Odds Ratio, compares the probability a data event 
-            happen with the probability of the same event not happen (i.e., the complement)."),
-          p("The odds ratio of a white American getting skin cancer is \\(\\frac{2.6}{100-2.6}\\approx 0.0267\\). 
-             Thus, the probability (risk) of a white American getting skin cancer is 0.0267 times 
-            as large as the probability of them not getting skin cancer. 
-            Put another way, we can say that the odds of a white American getting skin cancer is 1 to 37. 
-            The odds of a black American getting skin cancer are 1 to 999.")
+          tags$li("Increased Risk"),
+          p("Increased Risk (IR) is relative risk expressed as a percentage increase over the lower risk group."),
+          p("For example if the relative risk of losing your wifi signal 1.4 times higher in your living room 
+            compared to your garage than the increased risk is 40%. As a formula
+            \\[IR=\\text{(Relative Risk-1)}*100%\\]"),
+          br(),
+          tags$li("Odds"),
+          p("Odds compare the probability of events with the opposite event."),
+          p("For example, if a horse wins 1 out of every 5 races, its odds of winning are 1 to 4 (expressed as 1:4) 
+            since it wins one race for every 4 it loses."),
+          br(),
+          tags$li("Odds Ratio"),
+          p("An odds ratio is the ratio of the odds for two groups."),
+          p("For example, if the odds that a man over 65 years old has a heart attack in the next five years 
+            is 1 to 4 and the odds that a woman over 65 years old has a heart attack in the next five years is 1 to 20, 
+            then the odds ratio is 5 = 1/4 divided by 1/20 
+            (i.e. men that age have 5 times higher odds than women for having a heart attack).")
         ),
         br(),
         div(
@@ -155,14 +165,15 @@ ui <- dashboardPage(
             uiOutput('box1'),
             div(selectInput(
               inputId = 'first',
-              "",
+              '',
               c(
-                "Select Answer",
-                'Relative Risk',
-                'Risk',
+                'Select Answer',
+                'Increase Risk',
                 'Odds',
                 'Odds Ratio',
-                "Probability"
+                'Probability',
+                'Relative Risk',
+                'Risk'
               ), width = '90%'
             ), style = 'margin-top:-29px;'),
             div(uiOutput('mark1'), style = 'position:absolute;top:21%;right:8%;'),
@@ -170,14 +181,15 @@ ui <- dashboardPage(
             uiOutput('box2'),
             div(selectInput(
               'second',
-              "",
+              '',
               c(
-                "Select Answer",
-                'Relative Risk',
-                'Risk',
+                'Select Answer',
+                'Increase Risk',
                 'Odds',
                 'Odds Ratio',
-                "Probability"
+                'Probability',
+                'Relative Risk',
+                'Risk'
               ), width = '90%'
             ), style = 'margin-top:-29px;'),
             div(uiOutput('mark2'), style = 'position:absolute;top:41%;right:8%;'),
@@ -185,14 +197,15 @@ ui <- dashboardPage(
             uiOutput('box3'),
             div(selectInput(
               'third',
-              "",
+              '',
               c(
-                "Select Answer",
-                'Relative Risk',
-                'Risk',
+                'Select Answer',
+                'Increase Risk',
                 'Odds',
                 'Odds Ratio',
-                "Probability"
+                'Probability',
+                'Relative Risk',
+                'Risk'
               ), width = '90%'
             ), style = 'margin-top:-29px;'),
             div(uiOutput('mark3'), style = 'position:absolute;top:60%;right:8%;'),
@@ -200,14 +213,15 @@ ui <- dashboardPage(
             uiOutput('box4'),
             div(selectInput(
               'fourth',
-              "",
+              '',
               c(
-                "Select Answer",
-                'Relative Risk',
-                'Risk',
+                'Select Answer',
+                'Increase Risk',
                 'Odds',
                 'Odds Ratio',
-                "Probability"
+                'Probability',
+                'Relative Risk',
+                'Risk'
               ), width = '90%'
             ), style = 'margin-top:-29px;'),
             div(uiOutput('mark4'), style = 'position:absolute;top:80%;right:8%;'),
