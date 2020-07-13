@@ -8,11 +8,15 @@ shinyServer(function(session, input, output) {
       session = session,
       title = "Instructions:",
       text = tags$ol(
-      tags$li("You need to find appropriate measure that goes with the numerical value."),
-      tags$li("You have 4 chances to save the poor little man and you need to get 10 scenarios correct."),
-      tags$li("Remember, if you miss any question on the scenario, then the man will drop down to the next branch.")
+      tags$li("You need to find an appropriate measure that goes with 
+              the numerical value."),
+      tags$li("You have 4 chances to save the poor little man and you need 
+              to get 10 scenarios correct."),
+      tags$li("Remember, if you miss any question on the scenario, 
+              then the man will drop down to the next branch.")
       ),
-      type = "info"
+      type = "info",
+      btn_colors = "orange"
     )
   })
   observeEvent(input$nextbutton, {
@@ -37,34 +41,53 @@ shinyServer(function(session, input, output) {
     updateButton(session, "restart", disabled = FALSE)
   })
   
+  #scenario = 1
+  #trythis2 = bank[scenario,4]
+  
   observeEvent(input$nextq, {
-    updateButton(session, 'submit', disabled = FALSE)
-    updateButton(session, 'nextq', disabled = TRUE)
-    updateButton(session, 'restart', disabled = TRUE)
-    updateSelectInput(session, 'first','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
-    updateSelectInput(session, 'second','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
-    updateSelectInput(session, 'third','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
-    updateSelectInput(session, 'fourth','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
+    updateButton(session, inputId = 'submit', disabled = FALSE)
+    updateButton(session, inputId = 'nextq', disabled = TRUE)
+    updateButton(session, inputId = 'restart', disabled = TRUE)
+    updateSelectInput(session, inputId = 'first', label = input$box1,
+                      c('Select Answer', 'Increase Risk', 'Odds', 'Odds Ratio',
+                        'Probability', 'Relative Risk', 'Risk'))
+    updateSelectInput(session, inputId = 'second', label = input$box2,
+                      c('Select Answer', 'Increase Risk', 'Odds', 'Odds Ratio',
+                        'Probability', 'Relative Risk', 'Risk'))
+    updateSelectInput(session, inputId = 'third', label = input$box3,
+                      c('Select Answer', 'Increase Risk', 'Odds', 'Odds Ratio',
+                        'Probability', 'Relative Risk', 'Risk'))
+    updateSelectInput(session, inputId = 'fourth', label = input$box4,
+                      c('Select Answer', 'Increase Risk', 'Odds', 'Odds Ratio',
+                        'Probability', 'Relative Risk', 'Risk'))
   })
-  #### Restart button
+  #### Reattempt button
   observeEvent(input$restart,{
     updateButton(session, 'submit', disabled = FALSE)
     updateButton(session, 'restart',disable =TRUE)
-    updateSelectInput(session, 'first','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
-    updateSelectInput(session, 'second','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
-    updateSelectInput(session, 'third','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
-    updateSelectInput(session, 'fourth','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
+    updateSelectInput(session, inputId = 'first', label = input$box1,
+                      c('Select Answer', 'Increase Risk', 'Odds', 'Odds Ratio',
+                        'Probability', 'Relative Risk', 'Risk'))
+    updateSelectInput(session, inputId = 'second', label = input$box2,
+                      c('Select Answer', 'Increase Risk', 'Odds', 'Odds Ratio',
+                        'Probability', 'Relative Risk', 'Risk'))
+    updateSelectInput(session, inputId = 'third', label = input$box3,
+                      c('Select Answer', 'Increase Risk', 'Odds', 'Odds Ratio',
+                        'Probability', 'Relative Risk', 'Risk'))
+    updateSelectInput(session, inputId = 'fourth', label = input$box4,
+                      c('Select Answer', 'Increase Risk', 'Odds', 'Odds Ratio',
+                        'Probability', 'Relative Risk', 'Risk'))
     output$mark1 <- renderUI({
-      img(src = NULL,width = 20)
+      img(src = NULL, width = 20)
     })
     output$mark2 <- renderUI({
-      img(src = NULL,width = 20)
+      img(src = NULL, width = 20)
     })
     output$mark3 <- renderUI({
-      img(src = NULL,width = 20)
+      img(src = NULL, width = 20)
     })
     output$mark4 <- renderUI({
-      img(src = NULL,width = 20)
+      img(src = NULL, width = 20)
     })
   })
   #### Reset button
@@ -81,26 +104,29 @@ shinyServer(function(session, input, output) {
     updateButton(session, "restart",disable =TRUE)
     updateButton(session, "nextq", disabled = TRUE)
     updateButton(session, "reset", disabled = TRUE)
-    # removeUI(selector='#reset', immediate=TRUE)
-    # insertUI(selector='#nextq',immediate = TRUE)
-    # autoDestroy=TRUE
-
-    updateSelectInput(session, 'first','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
-    updateSelectInput(session, 'second','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
-    updateSelectInput(session, 'third','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
-    updateSelectInput(session, 'fourth','',c('Select Answer','Increase Risk','Odds','Odds Ratio','Probability','Relative Risk','Risk'))
-
+    updateSelectInput(session, inputId = 'first', label = input$box1,
+                      c('Select Answer', 'Increase Risk', 'Odds', 'Odds Ratio',
+                        'Probability', 'Relative Risk', 'Risk'))
+    updateSelectInput(session, inputId = 'second', label = input$box2,
+                      c('Select Answer', 'Increase Risk', 'Odds', 'Odds Ratio',
+                        'Probability', 'Relative Risk', 'Risk'))
+    updateSelectInput(session, inputId = 'third', label = input$box3,
+                      c('Select Answer', 'Increase Risk', 'Odds', 'Odds Ratio',
+                        'Probability', 'Relative Risk', 'Risk'))
+    updateSelectInput(session, inputId = 'fourth', label = input$box4,
+                      c('Select Answer', 'Increase Risk', 'Odds', 'Odds Ratio',
+                        'Probability', 'Relative Risk', 'Risk'))
     output$mark1 <- renderUI({
-      img(src = NULL,width = 30)
+      img(src = NULL, width = 30)
     })
     output$mark2 <- renderUI({
-      img(src = NULL,width = 30)
+      img(src = NULL, width = 30)
     })
     output$mark3 <- renderUI({
-      img(src = NULL,width = 30)
+      img(src = NULL, width = 30)
     })
     output$mark4 <- renderUI({
-      img(src = NULL,width = 30)
+      img(src = NULL, width = 30)
     })
     value$correct <- 0
     value$mistake <- 0
@@ -132,291 +158,292 @@ shinyServer(function(session, input, output) {
       updateButton(session, "reset",disabled = FALSE)
     }
     output$mark1 <- renderUI({
-      img(src = NULL,width = 30)
+      img(src = NULL, width = 30)
     })
     output$mark2 <- renderUI({
-      img(src = NULL,width = 30)
+      img(src = NULL, width = 30)
     })
     output$mark3 <- renderUI({
-      img(src = NULL,width = 30)
+      img(src = NULL, width = 30)
     })
     output$mark4 <- renderUI({
-      img(src = NULL,width = 30)
+      img(src = NULL, width = 30)
     })
   })
   # UI for score
   output$correct <- renderUI({
-    p("Number of completed scenarios:" ,"", value$correct, " out of 10")
+    p("Number of completed scenarios: " , value$correct, " out of 10")
   })
   observeEvent(input$submit,{
     output$correct <- renderUI({
-      p("Number of completed scenarios: " ,"", value$correct, " out of 10" )
+      p("Number of completed scenarios: " , value$correct, " out of 10" )
     })
   })
+  ########################## Hard Code Starts #######################
   #### Questions
   output$question <- renderUI({
     if(value$index == 1){ # ex) this is the question for Q1 on question bank.
-      p(bank[1,5])
+      bank[1,5]
     }
     else if(value$index == 2){
-      p(bank[5,5])
+      bank[5,5]
     }
     else if(value$index == 3){
-      p(bank[9,5])
+      bank[9,5]
     }
     else if(value$index == 4){
-      p(bank[13,5])
+      bank[13,5]
     }
     else if(value$index == 5){
-      p(bank[17,5])
+      bank[17,5]
     }
     else if(value$index == 6){
-      p(bank[21,5])
+      bank[21,5]
     }
     else if(value$index == 7){
-      p(bank[25,5])
+      bank[25,5]
     }
     else if(value$index == 8){
-      p(bank[29,5])
+      bank[29,5]
     }
     else if(value$index == 9){
-      p(bank[33,5])
+      bank[33,5]
     }
     else if(value$index == 10){
-      p(bank[37,5])
+      bank[37,5]
     }
     else if(value$index == 11){
-      p(bank[41,5])
+      bank[41,5]
     }
     else if(value$index == 12){
-      p(bank[45,5])
+      bank[45,5]
     }
     else if(value$index == 13){
-      p(bank[49,5])
+      bank[49,5]
     }
     else if(value$index == 14){
-      p(bank[53,5])
+      bank[53,5]
     }
     else if(value$index == 15){
-      p(bank[57,5])
+      bank[57,5]
     }
   })
   #### Questions - first number on each scenario
   output$box1 <- renderUI({
     if(value$index ==1){
-      p(bank[1,4])
+      bank[1,4]
     }
     else if(value$index ==2){
-      p(bank[5,4])
+      bank[5,4]
     }
     else if(value$index == 3){
-      p(bank[9,4])
+      bank[9,4]
     }
     else if(value$index == 4){
-      p(bank[13,4])
+      bank[13,4]
     }
     else if(value$index == 5){
-      p(bank[17,4])
+      bank[17,4]
     }
     else if(value$index == 6){
-      p(bank[21,4])
+      bank[21,4]
     }
     else if(value$index == 7){
-      p(bank[25,4])
+      bank[25,4]
     }
     else if(value$index == 8){
-      p(bank[29,4])
+      bank[29,4]
     }
     else if(value$index == 9){
-      p(bank[33,4])
+      bank[33,4]
     }
     else if(value$index == 10){
-      p(bank[37,4])
+      bank[37,4]
     }
     else if(value$index == 11){
-      p(bank[41,4])
+      bank[41,4]
     }
     else if(value$index == 12){
-      p(bank[45,4])
+      bank[45,4]
     }
     else if(value$index == 13){
-      p(bank[49,4])
+      bank[49,4]
     }
     else if(value$index == 14){
-      p(bank[53,4])
+      bank[53,4]
     }
     else if(value$index == 15){
-      p(bank[57,4])
+      bank[57,4]
     }
   })
   #### Questions - second number on each scenario
   output$box2 <- renderUI({
     if(value$index ==1){
-      p(bank[2,4])
+      bank[2,4]
     }
     else if(value$index ==2){
-      p(bank[6,4])
+      bank[6,4]
     }
     else if(value$index == 3){
-      p(bank[10,4])
+      bank[10,4]
     }
     else if(value$index == 4){
-      p(bank[14,4])
+      bank[14,4]
     }
     else if(value$index == 5){
-      p(bank[18,4])
+      bank[18,4]
     }
     else if(value$index == 6){
-      p(bank[22,4])
+      bank[22,4]
     }
     else if(value$index == 7){
-      p(bank[26,4])
+      bank[26,4]
     }
     else if(value$index == 8){
-      p(bank[30,4])
+      bank[30,4]
     }
     else if(value$index == 9){
-      p(bank[34,4])
+      bank[34,4]
     }
     else if(value$index == 10){
-      p(bank[38,4])
+      bank[38,4]
     }
     else if(value$index == 11){
-      p(bank[42,4])
+      bank[42,4]
     }
     else if(value$index == 12){
-      p(bank[46,4])
+      bank[46,4]
     }
     else if(value$index == 13){
-      p(bank[50,4])
+      bank[50,4]
     }
     else if(value$index == 14){
-      p(bank[54,4])
+      bank[54,4]
     }
     else if(value$index == 15){
-      p(bank[58,4])
+      bank[58,4]
     }
   })
   #### Questions - third number on each scenario
   output$box3 <- renderUI({
     if(value$index == 1){
-      p(bank[3,4])
+      bank[3,4]
     }
     else if(value$index == 2){
-      p(bank[7,4])
+      bank[7,4]
     }
     else if(value$index == 3){
-      p(bank[11,4])
+      bank[11,4]
     }
     else if(value$index == 4){
-      p(bank[15,4])
+      bank[15,4]
     }
     else if(value$index == 5){
-      p(bank[19,4])
+      bank[19,4]
     }
     else if(value$index == 6){
-      p(bank[23,4])
+      bank[23,4]
     }
     else if(value$index == 7){
-      p(bank[27,4])
+      bank[27,4]
     }
     else if(value$index == 8){
-      p(bank[31,4])
+      bank[31,4]
     }
     else if(value$index == 9){
-      p(bank[35,4])
+      bank[35,4]
     }
     else if(value$index == 10){
-      p(bank[39,4])
+      bank[39,4]
     }
     else if(value$index == 11){
-      p(bank[43,4])
+      bank[43,4]
     }
     else if(value$index == 12){
-      p(bank[47,4])
+      bank[47,4]
     }
     else if(value$index == 13){
-      p(bank[51,4])
+      bank[51,4]
     }
     else if(value$index == 14){
-      p(bank[55,4])
+      bank[55,4]
     }
     else if(value$index == 15){
-      p(bank[59,4])
+      bank[59,4]
     }
   })
   #### Questions - fourth number on each scenario
   output$box4 <- renderUI({
     if(value$index == 1){
-      p(bank[4,4])
+      bank[4,4]
     }
     else if(value$index == 2){
-      p(bank[8,4])
+      bank[8,4]
     }
     else if(value$index == 3){
-      p(bank[12,4])
+      bank[12,4]
     }
     else if(value$index == 4){
-      p(bank[16,4])
+      bank[16,4]
     }
     else if(value$index == 5){
-      p(bank[20,4])
+      bank[20,4]
     }
     else if(value$index == 6){
-      p(bank[24,4])
+      bank[24,4]
     }
     else if(value$index == 7){
-      p(bank[28,4])
+      bank[28,4]
     }
     else if(value$index == 8){
-      p(bank[32,4])
+      bank[32,4]
     }
     else if(value$index == 9){
-      p(bank[36,4])
+      bank[36,4]
     }
     else if(value$index == 10){
-      p(bank[40,4])
+      bank[40,4]
     }
     else if(value$index == 11){
-      p(bank[44,4])
+      bank[44,4]
     }
     else if(value$index == 12){
-      p(bank[48,4])
+      bank[48,4]
     }
     else if(value$index == 13){
-      p(bank[52,4])
+      bank[52,4]
     }
     else if(value$index == 14){
-      p(bank[56,4])
+      bank[56,4]
     }
     else if(value$index == 15){
-      p(bank[60,4])
+      bank[60,4]
     }
   })
   ## check marks ##
   observeEvent(input$submit,{ 
     output$mark1 <- renderUI({
       if (any(input$first == correct_answer[value$box1,1])){
-        img(src = "check.png",width = 30)
+        img(src = "check.png", width = 30)
       }
       else{
-        img(src = "cross.png",width = 30)
+        img(src = "cross.png", width = 30)
       }
     })
     output$mark2 <- renderUI({
       if (any(input$second == correct_answer[value$box2,1])){
-        img(src = "check.png",width = 30)
+        img(src = "check.png", width = 30)
       }
       else{
-        img(src = "cross.png",width = 30)
+        img(src = "cross.png", width = 30)
       }
      })
     output$mark3 <- renderUI({
       if (any(input$third == correct_answer[value$box3,1])){
-        img(src = "check.png",width = 30)
+        img(src = "check.png", width = 30)
       }
       else{
-        img(src = "cross.png",width = 30)
+        img(src = "cross.png", width = 30)
       }
     })
     output$mark4 <- renderUI({
@@ -470,7 +497,8 @@ shinyServer(function(session, input, output) {
         inputId = "end",
         title = "Well Done!",
         type = "success",
-        text = p("You have completed this challenge! Thank you for saving this poor little man!"),
+        text = p("You have completed this challenge! Thank you for saving 
+                 this poor little man!"),
         btn_labels = "End",
         btn_colors = "orange"
       )
@@ -504,7 +532,8 @@ shinyServer(function(session, input, output) {
         object = list(
           id = paste0(getCurrentAddress(session), "#", value$index),
           name = paste('Question', value$index, ":", bank[value$index*4,5]),
-          description = paste(bank[value$box1,4], bank[value$box2,4], bank[value$box3,4], bank[value$box4,4], sep =";")
+          description = paste(bank[value$box1,4], bank[value$box2,4], 
+                              bank[value$box3,4], bank[value$box4,4], sep =";")
         ),
         result = list(
           success = (any(input$first == correct_answer[value$box1,1])&&
@@ -515,9 +544,14 @@ shinyServer(function(session, input, output) {
                           any(input$second != 'Select Answer')&&
                           any(input$third != 'Select Answer')&&
                           any(input$fourth != 'Select Answer')),
-          response = paste(input$first, input$second, input$third, input$fourth, correct_answer[value$box1,1], correct_answer[value$box2,1], correct_answer[value$box3,1],correct_answer[value$box4,1], sep = ";"),
+          response = paste(input$first, input$second, input$third, 
+                           input$fourth, correct_answer[value$box1,1], 
+                           correct_answer[value$box2,1], 
+                           correct_answer[value$box3,1], 
+                           correct_answer[value$box4,1], sep = ";"),
           duration = value$correct/10
-          #the total questions number to reach win is 10, the duration is the percentage of correct answers/total 10
+          #the total questions number to reach win is 10, the duration is 
+          #the percentage of correct answers/total 10
         )
       )
     )
@@ -529,23 +563,33 @@ shinyServer(function(session, input, output) {
   output$scoreTree <- renderUI({
     ## Background
     if(value$mistake == 0){
-      img(src = "Cell01.jpg", height = '530px', width = '100%')
+      img(src = "Cell01.jpg",
+          alt = "This is first tree which shows you are fine.",
+          width = '100%')
     }
     ## Head
     else if(value$mistake == 1 ) {
-      img(src = "Cell02.jpg", height = '530px', width = '100%')
+      img(src = "Cell02.jpg", 
+          alt = "This is the first tree which shows you are fine.",
+          width = '100%')
     }
     ## Arms
     else if(value$mistake == 2) {
-      img(src = "Cell03.jpg", height = '530px', width = '100%')
+      img(src = "Cell03.jpg", 
+          alt = "This is the second tree which shows you lose one life.",
+          width = '100%')
     }
     ## Body
     else if(value$mistake == 3 ) {
-      img(src = "Cell04.jpg", height = '530px', width = '100%')
+      img(src = "Cell04.jpg", 
+          alt = "This is the third tree which shows you only have one life.",
+          width = '100%')
     }
     ## Legs
     else if(value$mistake == 4) {
-      img(src = "Cell05.jpg", height = '530px', width = '100%')
+      img(src = "Cell05.jpg", 
+          alt = "This is the last tree which shows you are dead.",
+          width = '100%')
       }
   })
 })

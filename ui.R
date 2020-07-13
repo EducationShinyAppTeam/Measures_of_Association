@@ -1,10 +1,9 @@
 library(shinydashboard)
 library(shiny)
 library(shinyBS)
-library(shinyWidgets) #for 'sendSweetAlert' function
+library(shinyWidgets)
 library(boastUtils)
-#library(rlocker) #this is for future work when we get announcement from the instructor
-#Let`s begin
+#Let us begin
 ui <- dashboardPage(
   skin = "yellow",
   dashboardHeader(
@@ -40,34 +39,41 @@ ui <- dashboardPage(
       tabItem(
         tabName = "overview",
         h1("Measures of Association"),
-        p(
-          "In this app, you will explore measures of association for two by two tables 
-          and test your ability to distinguish probability, risk, relative risk, odds and odds ratio."),
+        p("In this app, you will explore measures of association to test 
+           your ability to distinguish increased risk, probability, risk, 
+           relative risk, odds, and odds ratio."),
         br(),
         h2("Instructions"),
         tags$ol(
           tags$li(
-            "Review the different quantities on the ", actionLink("link_to_preq", "Prerequisites"), "page."
-          ),
-          tags$li(
-            "You'll start the game with the man relaxing on top of the tree.
-             If you miss a question, he will fall to the next branch.
-             You need to get ten scenarios right before he falls all the way to the ground."
+            "Review the different quantities on the ", 
+            actionLink("link_to_preq", "Prerequisites"), "page."
                  ),
           tags$li(
-            "For each scenario provided, choose the measure that goes with the numerical value."
+            "You'll start the game with a man relaxing on top of a tree and
+            a scenario displayed."
                  ),
           tags$li(
-            "If you get every question for the scenario correct then that counts toward your total of ten needed.
-             If you miss any, then the man will drop down to the next branch."
+            "For each scenario, you'll need to correctly identify which type of
+            measure is each number that gets displayed. 
+            Press the Submit button to check your work."
                  ),
           tags$li(
-            "If you miss all questions on the scenario, you cannot proceed to the next scenario and
-             you have to click 'Re-attempt' button to try again that scenario."
+            "If you misidentify any values, the man will fall down to 
+            the next branch. If you correctly identify all of the values, 
+            you'll have completed that scenario."
                  ),
           tags$li(
-            "If you miss all chances, the man falls to the ground, and you can click 'RESET' button
-            to play again. Remember, you have 4 chances!"
+            "Your goal is to complete 10 scenarios before the man falls 
+            to the ground. The man will fall to the ground after four mistakes."
+                 ),
+          tags$li(
+            "Note: if you misidentify all of the values for a scenario, 
+            you won't be able to move beyond that scenario 
+            until you correctly identify at least one value. 
+            Use the Re-attempt button to make a new attempt at identifying 
+            the values in the current scenario. 
+            Press the RESET button if you wish to start the game over."
           )
           ),
         br(),
@@ -85,8 +91,8 @@ ui <- dashboardPage(
         br(),
         h2("Acknowledgements"),
         p(
-          "This app was originally developed and coded by Zhiliang Zhang. The app was further updated 
-          by Daehoon Gwak in June 2020.
+          "This app was originally developed and coded by Zhiliang Zhang. 
+          The app was further updated by Daehoon Gwak in June 2020.
           Special thanks to Luxin Wang for helping with some programming issues.",
           br(),
           br(),
@@ -102,43 +108,64 @@ ui <- dashboardPage(
         br(),
         tags$ol(
           tags$li("Probability"),
-          p("Probability is the long-run relative frequency of a particular data event occurring, 
-            given our assumptions about a repeatable process."),
-          p("For example, if we were to imagine running a lottery to pick a US citizen,
-            the probability of picking a female is 50.8%. 
-            Thus, 50.8% of the time we repeat carrying out this lottery 
-            (always starting from the same initial population), we will pick a female."),
+          p("Probability is the long-run relative frequency of a particular 
+          data event occurring, given our assumptions about a repeatable process."),
+          p("For example, if we were to imagine running a lottery to pick 
+          a US citizen, the probability of picking a female is 50.8%. 
+          Thus, 50.8% of the time we repeat carrying out this lottery 
+          (always starting from the same initial population), 
+            we will pick a female."),
           br(),
           tags$li("Risk"),
-          p("Risk refers to the probability of a data event that we view as being negative, undesirable, or 'bad'."),
-          p("For example, the lifetime risk of developing skin cancer is about 2.6% (1/38) for white Americans. 
-            Thus, we if imagine a process of picking white Americans and observing their lifetimes, 
-            2.6% of the time we will pick an individual who will develop skin cancer."),
+          p("Risk refers to the probability of a data event that 
+            we view as being negative, undesirable, or 'bad'."),
+          p("For example, the lifetime risk of developing skin cancer 
+          is about 2.6% (1/38) for white Americans. Thus, we if imagine 
+          a process of picking white Americans and observing their lifetimes, 
+            2.6% of the time we will pick an individual who will develop 
+            skin cancer."),
           br(),
           tags$li("Relative Risk"),
-          p("Relative Risk (RR) is the ratio of two groups' risk (probability) for a particular data event. 
-            We often calculate relative risk through the formula 
-            \\[RR=\\frac{\\text{Risk for Group 1}}{\\text{Risk for Group 2}}\\]"),
-          p("For example, the relative risk of skin cancer for a white American is 
-            \\(2.6\\%/0.1\\% = 0.0026/0.001 = 26\\) times as large as Black Americans."),
+          p("Relative Risk (RR) is the ratio of two groups' risk (probability) 
+          for a particular data event. We often calculate relative risk through 
+          the formula \\[RR=\\frac{\\text{Risk for Group 1}}{\\text{Risk 
+            for Group 2}}\\]"),
+          p("For example, the relative risk of skin cancer for a white American 
+            is \\(2.6\\%/0.1\\% = 0.0026/0.001 = 26\\) times as large 
+            as Black Americans."),
           br(),
           tags$li("Increased Risk"),
-          p("Increased Risk (IR) is relative risk expressed as a percentage increase over the lower risk group."),
-          p("For example if the relative risk of losing your wifi signal 1.4 times higher in your living room 
-            compared to your garage than the increased risk is 40%. As a formula
-            \\[IR=\\text{(Relative Risk-1)}*100%\\]"),
+          p("Increased Risk (IR) is relative risk expressed as a percentage 
+            increase over the lower risk group."),
+          p("As a formula \\[IR=\\text{(Relative Risk-1)}*100%\\]
+            For example, if the relative risk of skin cancer for 
+            a white American is 1.4 times higher compared to Black Americans, 
+            then the increased risk is 40%."),
           br(),
           tags$li("Odds"),
-          p("Odds compare the probability of events with the opposite event."),
-          p("For example, if a horse wins 1 out of every 5 races, its odds of winning are 1 to 4 (expressed as 1:4) 
-            since it wins one race for every 4 it loses."),
+          p("Odds is the ratio of two probabilities--the probability of 
+          a data event and the probability of that data event not happening 
+            (i.e., the complement or the opposite event). 
+            There are two ways that odds are expressed: 
+            as a fraction or using 'odds notation' with a colon. 
+            Letting \\(p=\\frac{x}{N}\\) represent the probability of 
+            a data event happening \\[\\text{Odds}=\\frac{p}{1-p}=\\frac{x/N}
+            {(N-x)/N}\\equiv X:(N-X)\\] We read odds notation, \\(X:Y\\) 
+            as 'X to Y'."),
+          p("For example, if a White American gets 1 out of every 5 skin 
+            cancer cases, its odds of getting skin cancer are 1 to 4 
+            (expressed as 1:4)."),
           br(),
           tags$li("Odds Ratio"),
-          p("An odds ratio is the ratio of the odds for two groups."),
-          p("For example, if the odds that a man over 65 years old has a heart attack in the next five years 
-            is 1 to 4 and the odds that a woman over 65 years old has a heart attack in the next five years is 1 to 20, 
-            then the odds ratio is 5 = 1/4 divided by 1/20 
-            (i.e. men that age have 5 times higher odds than women for having a heart attack).")
+          p("An odds ratio is the ratio of the odds for two groups of 
+          the same/similar data event. Suppose that the first group has a 
+          probability of the data event of p and the second group has a 
+          probability of r. Then \\[\\text{Odds Ratio}=\\frac{p}{1-p}\\
+            bigg/\\frac{r}{1-r}\\]."),
+          p("For example, if the odds that a White American has 
+          a skin cancer in the next five years is 1 to 4 and the odds that 
+          a Black American has a skin caner in the next five years is 1 to 20, 
+            then the odds ratio is 5 = 1/4 divided by 1/20.")
         ),
         br(),
         div(
@@ -162,10 +189,10 @@ ui <- dashboardPage(
                      wellPanel(
             p("Choose appropriate answers", style = 'text-align:center'),
             br(),
-            uiOutput('box1'),
+            #uiOutput('box1', style = 'position:absolute;right:10%;'),
             div(selectInput(
               inputId = 'first',
-              '',
+              label = uiOutput('box1'),
               c(
                 'Select Answer',
                 'Increase Risk',
@@ -176,12 +203,12 @@ ui <- dashboardPage(
                 'Risk'
               ), width = '90%'
             ), style = 'margin-top:-29px;'),
-            div(uiOutput('mark1'), style = 'position:absolute;top:21%;right:8%;'),
+            div(uiOutput('mark1'), style = 'position:absolute;top:20%;right:8%;'),
             br(),
-            uiOutput('box2'),
+            #uiOutput('box2'),
             div(selectInput(
-              'second',
-              '',
+              inputId = 'second',
+              label = uiOutput('box2'),
               c(
                 'Select Answer',
                 'Increase Risk',
@@ -192,12 +219,12 @@ ui <- dashboardPage(
                 'Risk'
               ), width = '90%'
             ), style = 'margin-top:-29px;'),
-            div(uiOutput('mark2'), style = 'position:absolute;top:41%;right:8%;'),
+            div(uiOutput('mark2'), style = 'position:absolute;top:40%;right:8%;'),
             br(),
-            uiOutput('box3'),
+            #uiOutput('box3'),
             div(selectInput(
-              'third',
-              '',
+              inputId = 'third',
+              label = uiOutput('box3'),
               c(
                 'Select Answer',
                 'Increase Risk',
@@ -208,12 +235,12 @@ ui <- dashboardPage(
                 'Risk'
               ), width = '90%'
             ), style = 'margin-top:-29px;'),
-            div(uiOutput('mark3'), style = 'position:absolute;top:60%;right:8%;'),
+            div(uiOutput('mark3'), style = 'position:absolute;top:58%;right:8%;'),
             br(),
-            uiOutput('box4'),
+            #uiOutput('box4'),
             div(selectInput(
-              'fourth',
-              '',
+              inputId = 'fourth',
+              label = uiOutput('box4'),
               c(
                 'Select Answer',
                 'Increase Risk',
@@ -224,12 +251,18 @@ ui <- dashboardPage(
                 'Risk'
               ), width = '90%'
             ), style = 'margin-top:-29px;'),
-            div(uiOutput('mark4'), style = 'position:absolute;top:80%;right:8%;'),
+            div(uiOutput('mark4'), style = 'position:absolute;top:77%;right:8%;'),
             br(),
           )),
-          column(8, 
+          column(8, # score tree
             uiOutput("correct", align = 'center'),
               div(uiOutput("scoreTree"), align = 'center')
+            # tags$script(HTML(
+            # "#(document).ready(function() {
+            # document.getElementById('scoreTree').setAttribute('aria-label',
+            # 'This is the tree which shows how many chances you have left.')
+            # })"
+            # ))
             )
           ),
             fluidRow(
