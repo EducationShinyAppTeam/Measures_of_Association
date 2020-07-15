@@ -1,49 +1,67 @@
 library(boastUtils)
 #Let`s begin
+
+# Read in questions ----
 bank <- read.csv("questionbank.csv")
 bank = data.frame(lapply(bank, as.character), stringsAsFactors = FALSE)
+
+# Set up shiny server ---
 shinyServer(function(session, input, output) {
-  observeEvent(input$info,{
+  # Define info button ----
+  observeEvent(input$info, {
     sendSweetAlert(
       session = session,
-      title = "Instructions:",
+      title = "Instructions",
       text = tags$ol(
-      tags$li("You need to find an appropriate measure that goes with 
-              the numerical value."),
-      tags$li("You have 4 chances to save the poor little man and you need 
-              to get 10 scenarios correct."),
-      tags$li("Remember, if you miss any question on the scenario, 
-              then the man will drop down to the next branch.")
+        tags$li("You need to find an appropriate measure that goes with the
+                numerical value."),
+        tags$li("You have 4 chances to save the poor little man and you need to
+                get 10 scenarios correct."),
+        tags$li("Remember, if you miss any question on the scenario, then the
+                man will drop down to the next branch.")
       ),
-      type = "info",
-      btn_colors = "orange"
+      type = "info"
     )
   })
+
+  # Set Prereqs link ----
+  observeEvent(input$linkPreq, {
+    updateTabItems(session, "tabs", "prerequisite")
+  })
+
+  # Define the two go buttons
   observeEvent(input$nextbutton, {
     updateTabItems(session, "tabs", "prerequisite")
     })
-  
-  observeEvent(input$link_to_preq, {
-    updateTabItems(session, "tabs", "prerequisite")
-  })
-  
+
   observeEvent(input$go, {
     updateTabItems(session, "tabs", "Hangman")
   })
-  
+
+  # Daehoon: Replace going to references with just starting the game over.
   observeEvent(input$end, {
     updateTabItems(session, "tabs", "References")
   })
-  
+
+  # Submit Button Actions
+  # Daehoon: place everything that should happen when the user presses the
+  # submit button in this one observeEvent call
   observeEvent(input$submit, {
     updateButton(session, "nextq", disabled = FALSE)
     updateButton(session, "submit", disabled = TRUE)
     updateButton(session, "restart", disabled = FALSE)
   })
-  
+
+  # Daehoon: do the same for the Re-attempt button, the next button, and the
+  # reset button; each one gets ONE observeEvent call.
+
+  # Daehoon: Delete these two comments
   #scenario = 1
   #trythis2 = bank[scenario,4]
-  
+
+  # Daehoon: make everything explicit in the update* functions
+  ## Also, if you aren't changing the values (i.e., the choices in the
+  ## selectInputs), you don't need to list them again.
   observeEvent(input$nextq, {
     updateButton(session, inputId = 'submit', disabled = FALSE)
     updateButton(session, inputId = 'nextq', disabled = TRUE)
@@ -77,8 +95,10 @@ shinyServer(function(session, input, output) {
     updateSelectInput(session, inputId = 'fourth', label = input$box4,
                       c('Select Answer', 'Increase Risk', 'Odds', 'Odds Ratio',
                         'Probability', 'Relative Risk', 'Risk'))
-    output$mark1 <- renderUI({
-      img(src = NULL, width = 20)
+    #Daehoon: use this as your template for the marks
+    output$mark1 <- renderImage({
+      return(NULL)
+      deleteFile = FALSE
     })
     output$mark2 <- renderUI({
       img(src = NULL, width = 20)
@@ -100,6 +120,7 @@ shinyServer(function(session, input, output) {
     value$box4= 4*value$index
     correct_answer <- as.matrix(bank[1:60,1])
 
+    # Daehoon: see prior comment about update* calls
     updateButton(session, "submit", disabled = FALSE)
     updateButton(session, "restart",disable =TRUE)
     updateButton(session, "nextq", disabled = TRUE)
@@ -116,8 +137,10 @@ shinyServer(function(session, input, output) {
     updateSelectInput(session, inputId = 'fourth', label = input$box4,
                       c('Select Answer', 'Increase Risk', 'Odds', 'Odds Ratio',
                         'Probability', 'Relative Risk', 'Risk'))
-    output$mark1 <- renderUI({
-      img(src = NULL, width = 30)
+    # Daehoon: use the following as the template for the marks
+    output$mark1 <- renderImage({
+      return(NULL)
+      deleteFile = FALSE
     })
     output$mark2 <- renderUI({
       img(src = NULL, width = 30)
@@ -146,7 +169,7 @@ shinyServer(function(session, input, output) {
   })
   ## after clicking next >>
   observeEvent(input$nextq,{
-    index_list$list=index_list$list[-1]   
+    index_list$list=index_list$list[-1]
     value$index <- index_list$list[1]
     value$box1= 4*value$index-3
     value$box2= 4*value$index-2
@@ -157,8 +180,10 @@ shinyServer(function(session, input, output) {
       updateButton(session,"submit", disabled = TRUE)
       updateButton(session, "reset",disabled = FALSE)
     }
-    output$mark1 <- renderUI({
-      img(src = NULL, width = 30)
+    # Daehoon: use this as the template for the marks
+    output$mark1 <- renderImage({
+      return(NULL)
+      deleteFile = TRUE
     })
     output$mark2 <- renderUI({
       img(src = NULL, width = 30)
@@ -228,6 +253,26 @@ shinyServer(function(session, input, output) {
       bank[57,5]
     }
   })
+
+  ## Daehoon: the following code will replace all of lines 276-467
+
+  # Put the values to be identified as labels
+  observe({
+    # Update the first box
+    updateSelectInput(
+      session = session,
+      inputId = "first",
+      label = bank[(1 + 4 * (value$index - 1)), 4]
+    )
+    # Update the second box
+    updateSelectInput(
+      session = session,
+      inputId = "second",
+      label = bank[(2 + 4 * (value$index - 1)), 4]
+    )
+    ## Daehoon: continue this for the third and fourth boxes
+  })
+
   #### Questions - first number on each scenario
   output$box1 <- renderUI({
     if(value$index ==1){
@@ -421,14 +466,27 @@ shinyServer(function(session, input, output) {
     }
   })
   ## check marks ##
-  observeEvent(input$submit,{ 
-    output$mark1 <- renderUI({
+  #Daehoon: see prior comment about one observeEvent for submit
+  observeEvent(input$submit,{
+    ## Daehoon: use the following as the template for the other marks
+    output$mark1 <- renderImage({
       if (any(input$first == correct_answer[value$box1,1])){
-        img(src = "check.png", width = 30)
+        return(list(
+          src = "www/check.png",
+          contentType = "image/png",
+          alt = "Correct",
+          width = 60
+        ))
       }
       else{
-        img(src = "cross.png", width = 30)
+        return(list(
+          src = "www/cross.png",
+          contentType = "image/png",
+          alt = "Incorrect",
+          width = 60
+        ))
       }
+      deleteFile = FALSE
     })
     output$mark2 <- renderUI({
       if (any(input$second == correct_answer[value$box2,1])){
@@ -455,7 +513,7 @@ shinyServer(function(session, input, output) {
       }
     })
   })
-  ################ Counting Mistakes ###############  
+  ################ Counting Mistakes ###############
   observeEvent(input$submit,{
     if(any(input$first != correct_answer[value$box1,1])||
        any(input$second != correct_answer[value$box2,1])||
@@ -497,7 +555,7 @@ shinyServer(function(session, input, output) {
         inputId = "end",
         title = "Well Done!",
         type = "success",
-        text = p("You have completed this challenge! Thank you for saving 
+        text = p("You have completed this challenge! Thank you for saving
                  this poor little man!"),
         btn_labels = "End",
         btn_colors = "orange"
@@ -532,7 +590,7 @@ shinyServer(function(session, input, output) {
         object = list(
           id = paste0(getCurrentAddress(session), "#", value$index),
           name = paste('Question', value$index, ":", bank[value$index*4,5]),
-          description = paste(bank[value$box1,4], bank[value$box2,4], 
+          description = paste(bank[value$box1,4], bank[value$box2,4],
                               bank[value$box3,4], bank[value$box4,4], sep =";")
         ),
         result = list(
@@ -544,13 +602,13 @@ shinyServer(function(session, input, output) {
                           any(input$second != 'Select Answer')&&
                           any(input$third != 'Select Answer')&&
                           any(input$fourth != 'Select Answer')),
-          response = paste(input$first, input$second, input$third, 
-                           input$fourth, correct_answer[value$box1,1], 
-                           correct_answer[value$box2,1], 
-                           correct_answer[value$box3,1], 
+          response = paste(input$first, input$second, input$third,
+                           input$fourth, correct_answer[value$box1,1],
+                           correct_answer[value$box2,1],
+                           correct_answer[value$box3,1],
                            correct_answer[value$box4,1], sep = ";"),
           duration = value$correct/10
-          #the total questions number to reach win is 10, the duration is 
+          #the total questions number to reach win is 10, the duration is
           #the percentage of correct answers/total 10
         )
       )
@@ -558,8 +616,9 @@ shinyServer(function(session, input, output) {
     # Store statement in locker and return status
     status <- rlocker::store(session, statement)
   })
-  
+
   ##### Draw the Hangman Game#####
+  # Daehoon: please convert these to renderImage; reference the marks for template
   output$scoreTree <- renderUI({
     ## Background
     if(value$mistake == 0){
@@ -569,25 +628,25 @@ shinyServer(function(session, input, output) {
     }
     ## Head
     else if(value$mistake == 1 ) {
-      img(src = "Cell02.jpg", 
+      img(src = "Cell02.jpg",
           alt = "This is the first tree which shows you are fine.",
           width = '100%')
     }
     ## Arms
     else if(value$mistake == 2) {
-      img(src = "Cell03.jpg", 
+      img(src = "Cell03.jpg",
           alt = "This is the second tree which shows you lose one life.",
           width = '100%')
     }
     ## Body
     else if(value$mistake == 3 ) {
-      img(src = "Cell04.jpg", 
+      img(src = "Cell04.jpg",
           alt = "This is the third tree which shows you only have one life.",
           width = '100%')
     }
     ## Legs
     else if(value$mistake == 4) {
-      img(src = "Cell05.jpg", 
+      img(src = "Cell05.jpg",
           alt = "This is the last tree which shows you are dead.",
           width = '100%')
       }

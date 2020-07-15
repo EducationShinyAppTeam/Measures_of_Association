@@ -9,12 +9,13 @@ ui <- dashboardPage(
   dashboardHeader(
     titleWidth = 250,
     title = "Measures of Association",
-    tags$li(class = "dropdown",
-            actionLink("info",icon("info",class = "myClass"))),
     tags$li(
       class = "dropdown",
-      tags$a(href = "https://shinyapps.science.psu.edu/",
-             icon("home"))
+      actionLink("info", icon("info"))
+    ),
+    tags$li(
+      class = "dropdown",
+      tags$a(href = "https://shinyapps.science.psu.edu/", icon("home"))
     )
   ),
   dashboardSidebar(
@@ -35,46 +36,50 @@ ui <- dashboardPage(
                 href = "https://educationshinyappteam.github.io/Style_Guide/theme/boast.css")
       ),
     tabItems(
-      ##First tab - Overview Tab
+      ##First tab - Overview Tab----
       tabItem(
         tabName = "overview",
         h1("Measures of Association"),
-        p("In this app, you will explore measures of association to test 
-           your ability to distinguish increased risk, probability, risk, 
+        p("In this app, you will explore measures of association to test
+           your ability to distinguish increased risk, probability, risk,
            relative risk, odds, and odds ratio."),
         br(),
         h2("Instructions"),
         tags$ol(
           tags$li(
-            "Review the different quantities on the ", 
-            actionLink("link_to_preq", "Prerequisites"), "page."
-                 ),
+            "Review the different quantities on the ",
+            actionLink(
+              inputId = "linkPreq",
+              label = "Prerequisites",
+              class = "bodylinks"
+              ),
+            "page."
+          ),
           tags$li(
             "You'll start the game with a man relaxing on top of a tree and
             a scenario displayed."
                  ),
           tags$li(
             "For each scenario, you'll need to correctly identify which type of
-            measure is each number that gets displayed. 
+            measure is each number that gets displayed.
             Press the Submit button to check your work."
                  ),
           tags$li(
-            "If you misidentify any values, the man will fall down to 
-            the next branch. If you correctly identify all of the values, 
+            "If you misidentify any values, the man will fall down to
+            the next branch. If you correctly identify all of the values,
             you'll have completed that scenario."
                  ),
           tags$li(
-            "Your goal is to complete 10 scenarios before the man falls 
+            "Your goal is to complete 10 scenarios before the man falls
             to the ground. The man will fall to the ground after four mistakes."
-                 ),
-          tags$li(
-            "Note: if you misidentify all of the values for a scenario, 
-            you won't be able to move beyond that scenario 
-            until you correctly identify at least one value. 
-            Use the Re-attempt button to make a new attempt at identifying 
-            the values in the current scenario. 
-            Press the RESET button if you wish to start the game over."
-          )
+                 )
+          ),
+          p(
+            "Note: if you misidentify all of the values for a scenario, you won't
+            be able to move beyond that scenario until you correctly identify at
+            least one value. Use the Re-attempt button to make a new attempt at
+            identifying the values in the current scenario. Press the RESET button
+            if you wish to start the game over."
           ),
         br(),
         div(
@@ -91,82 +96,110 @@ ui <- dashboardPage(
         br(),
         h2("Acknowledgements"),
         p(
-          "This app was originally developed and coded by Zhiliang Zhang. 
+          "This app was originally developed and coded by Zhiliang Zhang.
           The app was further updated by Daehoon Gwak in June 2020.
           Special thanks to Luxin Wang for helping with some programming issues.",
           br(),
           br(),
           br(),
-          div(class = "updated", "Last Update: 6/29/2020 by DG.")
+          div(class = "updated", "Last Update: 7/14/2020 by DG.")
          )
         ),
-      ##Second tab - Prerequiste Tab
+      ##Second tab - Prerequisite Tab ----
       tabItem(
         withMathJax(),
         tabName = "prerequisite",
         h2("Prerequisites"),
         br(),
-        tags$ol(
-          tags$li("Probability"),
-          p("Probability is the long-run relative frequency of a particular 
-          data event occurring, given our assumptions about a repeatable process."),
-          p("For example, if we were to imagine running a lottery to pick 
-          a US citizen, the probability of picking a female is 50.8%. 
-          Thus, 50.8% of the time we repeat carrying out this lottery 
-          (always starting from the same initial population), 
-            we will pick a female."),
-          br(),
-          tags$li("Risk"),
-          p("Risk refers to the probability of a data event that 
-            we view as being negative, undesirable, or 'bad'."),
-          p("For example, the lifetime risk of developing skin cancer 
-          is about 2.6% (1/38) for white Americans. Thus, we if imagine 
-          a process of picking white Americans and observing their lifetimes, 
-            2.6% of the time we will pick an individual who will develop 
-            skin cancer."),
-          br(),
-          tags$li("Relative Risk"),
-          p("Relative Risk (RR) is the ratio of two groups' risk (probability) 
-          for a particular data event. We often calculate relative risk through 
-          the formula \\[RR=\\frac{\\text{Risk for Group 1}}{\\text{Risk 
-            for Group 2}}\\]"),
-          p("For example, the relative risk of skin cancer for a white American 
-            is \\(2.6\\%/0.1\\% = 0.0026/0.001 = 26\\) times as large 
-            as Black Americans."),
-          br(),
-          tags$li("Increased Risk"),
-          p("Increased Risk (IR) is relative risk expressed as a percentage 
-            increase over the lower risk group."),
-          p("As a formula \\[IR=\\text{(Relative Risk-1)}*100%\\]
-            For example, if the relative risk of skin cancer for 
-            a white American is 1.4 times higher compared to Black Americans, 
-            then the increased risk is 40%."),
-          br(),
-          tags$li("Odds"),
-          p("Odds is the ratio of two probabilities--the probability of 
-          a data event and the probability of that data event not happening 
-            (i.e., the complement or the opposite event). 
-            There are two ways that odds are expressed: 
-            as a fraction or using 'odds notation' with a colon. 
-            Letting \\(p=\\frac{x}{N}\\) represent the probability of 
-            a data event happening \\[\\text{Odds}=\\frac{p}{1-p}=\\frac{x/N}
-            {(N-x)/N}\\equiv X:(N-X)\\] We read odds notation, \\(X:Y\\) 
-            as 'X to Y'."),
-          p("For example, if a White American gets 1 out of every 5 skin 
-            cancer cases, its odds of getting skin cancer are 1 to 4 
-            (expressed as 1:4)."),
-          br(),
-          tags$li("Odds Ratio"),
-          p("An odds ratio is the ratio of the odds for two groups of 
-          the same/similar data event. Suppose that the first group has a 
-          probability of the data event of p and the second group has a 
-          probability of r. Then \\[\\text{Odds Ratio}=\\frac{p}{1-p}\\
-            bigg/\\frac{r}{1-r}\\]."),
-          p("For example, if the odds that a White American has 
-          a skin cancer in the next five years is 1 to 4 and the odds that 
-          a Black American has a skin caner in the next five years is 1 to 20, 
-            then the odds ratio is 5 = 1/4 divided by 1/20.")
+        box(
+          title = "Probability",
+          p("Probability is the long-run relative frequency of a particular data
+            event occurring, given our assumptions about a repeatable process.
+            For example, if we were to imagine running a lottery to picka US
+            citizen, the probability of picking a female is 50.8%. Thus, 50.8% of
+            the time we repeat carrying out this lottery (always starting from
+            the same initial population), we will pick a female."),
+          collapsible = TRUE,
+          collapsed = TRUE,
+          footer= "Probability is not a measure of association.",
+          width = 12
         ),
+        box(
+          title = "Risk",
+          p("Risk refers to the probability of a data event that we view as being
+            negative, undesirable, or 'bad'. For example, the lifetime risk of
+            developing skin cancer is about 2.6% (1/38) for white Americans.
+            Thus, we if imagine a process of picking white Americans and
+            observing their lifetimes, 2.6% of the time we will pick an
+            individual who will develop skin cancer."),
+          collapsible = TRUE,
+          collapsed = TRUE,
+          footer= "Risk is not a measure of association.",
+          width = 12
+        ),
+        box(
+          title = "Relative Risk",
+          p("Relative Risk (RR) is the ratio of two groups' risk (probability)
+            for a particular data event. We often calculate relative risk
+            through the formula \\[RR=\\frac{\\text{Risk for Group 1}}
+            {\\text{Risk for Group 2}}\\] For example, the relative risk of skin
+            cancer for a white American is \\(2.6\\%/0.1\\% = 0.026/0.001 = 26\\)
+            times as large as Black Americans."),
+          collapsible = TRUE,
+          collapsed = TRUE,
+          footer= "Relative Risk is a measure of association.",
+          width = 12
+        ),
+        box(
+          title = "Increased Risk",
+          p("Increased Risk (IR) is relative risk expressed as a percentage
+            increase over the lower risk group. As a formula \\[IR=
+            \\left(\\text{Relative Risk}-1\\right)*100\\%\\] For example, since
+            the relative risk of skin cancer for a white American is 26 times
+            higher compared to Black Americans, then the increased risk is 2500%."),
+          collapsible = TRUE,
+          collapsed = TRUE,
+          footer= "Increased Risk is a measure of association.",
+          width = 12
+        ),
+        box(
+          title = "Odds",
+          p("Odds is the ratio of two probabilities--the probability of a data
+            event and the probability of that data event not happening (i.e.,
+            the complement or the opposite event). There are two ways that odds
+            are expressed: as a fraction or using 'odds notation' with a colon.
+            Letting \\(p=\\frac{x}{N}\\) represent the probability of a data event
+            happening, \\[\\text{Odds}=\\frac{p}{1-p}=\\frac{x/N} {(N-x)/N}
+            \\equiv X:(N-X)\\] We read odds notation, \\(X:Y\\) as 'X to Y'.",
+            br(),
+            "For example, the probability (risk) of a white American getting skin
+            cancer is 2.6%, approximately \\(\\frac{1}{38}\\). Thus the odds of
+            a white American getting skin cancer are 1:37. For Black Americans,
+            the odds of getting skin cancer are 1:999."),
+          collapsible = TRUE,
+          collapsed = TRUE,
+          footer= "Odds is not a measure of association.",
+          width = 12
+        ),
+        box(
+          title = "Odds Ratio",
+          p("An odds ratio is the ratio of the odds for two groups of the same/
+            similar data event. Suppose that the first group has a probability
+            of the data event of p and the second group has a probability of r.
+            Then \\[\\text{Odds Ratio}=\\frac{p}{1-p}\\bigg/\\frac{r}{1-r}\\]",
+            br(),
+            "For example, we found the odds of a white American (1:37) and a
+            Black American (1:999) getting skin cancer. The odds ratio for these
+            two groups would be \\[\\frac{1/38}{37/38}\\bigg/
+            \\frac{1/1000}{999/1000}\\approx 26.667\\]"),
+          collapsible = TRUE,
+          collapsed = TRUE,
+          footer= "Odds Ratio is a measure of association.",
+          width = 12
+        ),
+        p(tags$em("Note:"), " there are other measures of association that are
+          not covered by this app. For example, Pearson's Correlation, Spearman's
+          Rho, and Kendall's Tau."),
         br(),
         div(
           style = "text-align:center",
@@ -178,48 +211,74 @@ ui <- dashboardPage(
           )
         )
       ),
-      ## Third tab - Game Tab
+      ## Third tab - Game Tab ----
       tabItem(
         tabName = "Hangman",
-        h2("Choose the Correct Measure of Association"),
+        h2("Identifying Values"),
+        p("Read through each context carefuly. For the four given values,
+          identify what type of value each one is."),
+        h3("The Context"),
         uiOutput("question"),
-          # Four small questions to choose appropriate answer
-            fluidRow(
-              column(4,
-                     wellPanel(
-            p("Choose appropriate answers", style = 'text-align:center'),
-            br(),
-            #uiOutput('box1', style = 'position:absolute;right:10%;'),
-            div(selectInput(
-              inputId = 'first',
-              label = uiOutput('box1'),
-              c(
-                'Select Answer',
-                'Increase Risk',
-                'Odds',
-                'Odds Ratio',
-                'Probability',
-                'Relative Risk',
-                'Risk'
-              ), width = '90%'
-            ), style = 'margin-top:-29px;'),
-            div(uiOutput('mark1'), style = 'position:absolute;top:20%;right:8%;'),
-            br(),
-            #uiOutput('box2'),
-            div(selectInput(
-              inputId = 'second',
-              label = uiOutput('box2'),
-              c(
-                'Select Answer',
-                'Increase Risk',
-                'Odds',
-                'Odds Ratio',
-                'Probability',
-                'Relative Risk',
-                'Risk'
-              ), width = '90%'
-            ), style = 'margin-top:-29px;'),
-            div(uiOutput('mark2'), style = 'position:absolute;top:40%;right:8%;'),
+        fluidRow(
+          column(
+            width = 5,
+            wellPanel(
+              h3("Identify These Values"),
+              br(),
+              # Daehoon: use the following two fluidRows as your example for the
+              ## rest of the selectInputs
+              fluidRow(
+                column(
+                  width = 9,
+                  selectInput(
+                    inputId = 'first',
+                    label = "first value",
+                    choices = list(
+                      'Select Answer',
+                      'Increase Risk',
+                      'Odds',
+                      'Odds Ratio',
+                      'Probability',
+                      'Relative Risk',
+                      'Risk'
+                    ),
+                    selectize = FALSE
+                  )
+                ),
+                column(
+                  width = 3,
+                  imageOutput(
+                    outputId = "mark1",
+                    inline = TRUE
+                  )
+                )
+              ),
+              fluidRow(
+                column(
+                  width = 9,
+                  selectInput(
+                    inputId = 'second',
+                    label = "second value",
+                    choices = list(
+                      'Select Answer',
+                      'Increase Risk',
+                      'Odds',
+                      'Odds Ratio',
+                      'Probability',
+                      'Relative Risk',
+                      'Risk'
+                    ),
+                    selectize = FALSE
+                  )
+                ),
+                column(
+                  width = 3,
+                  imageOutput(
+                    outputId = "mark2",
+                    inline = TRUE
+                  )
+                )
+              ),
             br(),
             #uiOutput('box3'),
             div(selectInput(
@@ -254,7 +313,7 @@ ui <- dashboardPage(
             div(uiOutput('mark4'), style = 'position:absolute;top:77%;right:8%;'),
             br(),
           )),
-          column(8, # score tree
+          column(7, # score tree
             uiOutput("correct", align = 'center'),
               div(uiOutput("scoreTree"), align = 'center')
             # tags$script(HTML(
