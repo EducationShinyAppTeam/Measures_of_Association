@@ -24,7 +24,7 @@ ui <- dashboardPage(
     id = "tabs",
     menuItem("Overview", tabName = "overview", icon = icon("tachometer-alt")),
     menuItem("Prerequisites", tabName = "prerequisite", icon = icon("book")),
-    menuItem("Game", tabName = "Hangman", icon = icon("gamepad")),
+    menuItem("Game", tabName = "game", icon = icon("gamepad")),
     menuItem("References", tabName = "References", icon = icon("leanpub"))
                ),
     tags$div(class = "sidebar-logo",
@@ -85,7 +85,7 @@ ui <- dashboardPage(
         div(
           style = "text-align:center",
           bsButton(
-            inputId = "nextbutton",
+            inputId = "go1",
             label = "GO!",
             icon("bolt"),
             size = "large"
@@ -98,11 +98,12 @@ ui <- dashboardPage(
         p(
           "This app was originally developed and coded by Zhiliang Zhang.
           The app was further updated by Daehoon Gwak in June 2020.
-          Special thanks to Luxin Wang for helping with some programming issues.",
+          Special thanks to Luxin Wang and professor Neil Hatfield 
+          for helping with some programming issues.",
           br(),
           br(),
           br(),
-          div(class = "updated", "Last Update: 7/14/2020 by DG.")
+          div(class = "updated", "Last Update: 7/18/2020 by DG.")
          )
         ),
       ##Second tab - Prerequisite Tab ----
@@ -204,7 +205,7 @@ ui <- dashboardPage(
         div(
           style = "text-align:center",
           bsButton(
-            inputId = "go",
+            inputId = "go2",
             label = "GO!",
             icon("bolt"),
             size = "large"
@@ -213,29 +214,29 @@ ui <- dashboardPage(
       ),
       ## Third tab - Game Tab ----
       tabItem(
-        tabName = "Hangman",
+        tabName = "game",
         h2("Identifying Values"),
         p("Read through each context carefuly. For the four given values,
           identify what type of value each one is."),
         h3("The Context"),
         uiOutput("question"),
+        br(),
         fluidRow(
+          # this column is for the selectInput
           column(
             width = 5,
             wellPanel(
-              h3("Identify These Values"),
+              h3('Identify These Values'),
               br(),
-              # Daehoon: use the following two fluidRows as your example for the
-              ## rest of the selectInputs
               fluidRow(
                 column(
                   width = 9,
                   selectInput(
                     inputId = 'first',
-                    label = "first value",
+                    label = 'first value',
                     choices = list(
                       'Select Answer',
-                      'Increase Risk',
+                      'Increased Risk',
                       'Odds',
                       'Odds Ratio',
                       'Probability',
@@ -247,9 +248,9 @@ ui <- dashboardPage(
                 ),
                 column(
                   width = 3,
-                  imageOutput(
-                    outputId = "mark1",
-                    inline = TRUE
+                  uiOutput(
+                    outputId = 'mark1'
+                    #inline = TRUE
                   )
                 )
               ),
@@ -261,7 +262,7 @@ ui <- dashboardPage(
                     label = "second value",
                     choices = list(
                       'Select Answer',
-                      'Increase Risk',
+                      'Increased Risk',
                       'Odds',
                       'Odds Ratio',
                       'Probability',
@@ -273,90 +274,112 @@ ui <- dashboardPage(
                 ),
                 column(
                   width = 3,
-                  imageOutput(
+                  uiOutput(
                     outputId = "mark2",
-                    inline = TRUE
+                    #inline = TRUE
                   )
                 )
               ),
-            br(),
-            #uiOutput('box3'),
-            div(selectInput(
-              inputId = 'third',
-              label = uiOutput('box3'),
-              c(
-                'Select Answer',
-                'Increase Risk',
-                'Odds',
-                'Odds Ratio',
-                'Probability',
-                'Relative Risk',
-                'Risk'
-              ), width = '90%'
-            ), style = 'margin-top:-29px;'),
-            div(uiOutput('mark3'), style = 'position:absolute;top:58%;right:8%;'),
-            br(),
-            #uiOutput('box4'),
-            div(selectInput(
-              inputId = 'fourth',
-              label = uiOutput('box4'),
-              c(
-                'Select Answer',
-                'Increase Risk',
-                'Odds',
-                'Odds Ratio',
-                'Probability',
-                'Relative Risk',
-                'Risk'
-              ), width = '90%'
-            ), style = 'margin-top:-29px;'),
-            div(uiOutput('mark4'), style = 'position:absolute;top:77%;right:8%;'),
-            br(),
-          )),
-          column(7, # score tree
+              fluidRow(
+                column(
+                  width = 9,
+                  selectInput(
+                    inputId = 'third',
+                    label = 'third value',
+                    choices = list(
+                      'Select Answer',
+                      'Increased Risk',
+                      'Odds',
+                      'Odds Ratio',
+                      'Probability',
+                      'Relative Risk',
+                      'Risk'
+                      ), 
+                    selectize = FALSE
+                  )
+                ),
+                column(
+                  width = 3,
+                  uiOutput(
+                    outputId = 'mark3',
+                    #inline = TRUE
+                  )
+                )
+              ),
+              fluidRow(
+                column(
+                  width = 9,
+                  selectInput(
+                    inputId = 'fourth',
+                    label = 'fourth value',
+                    choices = list(
+                      'Select Answer',
+                      'Increased Risk',
+                      'Odds',
+                      'Odds Ratio',
+                      'Probability',
+                      'Relative Risk',
+                      'Risk'
+                      ),
+                    selectize = FALSE
+                  )
+                ),
+                column(
+                  width = 3,
+                  uiOutput(
+                    outputId = 'mark4'
+                    #inline = TRUE
+                    )
+                  )
+                )
+              )
+          ),
+          # this column is for the score tree image
+          column(width = 7,
             uiOutput("correct", align = 'center'),
-              div(uiOutput("scoreTree"), align = 'center')
-            # tags$script(HTML(
-            # "#(document).ready(function() {
-            # document.getElementById('scoreTree').setAttribute('aria-label',
-            # 'This is the tree which shows how many chances you have left.')
-            # })"
-            # ))
+              div(imageOutput(outputId = "scoreTree", inline = TRUE), align = 'center')
             )
           ),
-            fluidRow(
-              column(1,
-              bsButton(
-                inputId = 'submit',
-                label = "Submit",
-                size = "large",
-                style = "warning",
-                disabled = FALSE
-              )
+        # this row is for the buttons
+        fluidRow(
+          column(
+            1,
+            bsButton(
+              inputId = 'submit',
+              label = "Submit",
+              size = "large",
+              style = "warning",
+              disabled = FALSE
+            )
+          ),
+          column(
+            1,
+            offset = 4,
+            bsButton(
+              'reattempt',
+              'Re-attempt',
+              size = 'large',
+              style = "danger",
+              disabled = TRUE
+            )
+          ),
+          column(
+            1,
+            offset = 4,
+            bsButton(
+              inputId = 'nextq',
+              label = "Next >>",
+              size = "large",
+              disabled = TRUE
             ),
-            column(1, offset = 4,
-                   bsButton(
-                     'restart',
-                     'Re-attempt',
-                     size = 'large',
-                     style = "danger",
-                     disabled = TRUE
-                     )
-            ),
-            column(1, offset = 4,
-              bsButton(
-                inputId = 'nextq',
-                label = "Next >>",
-                size = "large",
-                disabled = TRUE
-              ),
-              bsButton(
-                inputId = 'reset',
-                label = "RESET",
-                size = "large",
-                disabled = TRUE
-              )
-            ),br()
+            bsButton(
+              inputId = 'reset',
+              label = "RESET",
+              size = "large",
+              disabled = TRUE
+            )
+          ),
+          br()
         )
       ),
       tabItem(
