@@ -1,262 +1,436 @@
 library(shinydashboard)
 library(shiny)
-library(shinyjs)
 library(shinyBS)
-library(shinyWidgets)
-library(rlocker)
+library(boastUtils)
 
-ui <- dashboardPage(skin = "yellow",
-                    dashboardHeader(title = "Measures of Association", titleWidth = 250,
-                                    tags$li(class = "dropdown",
-                                            tags$a(href = "https://shinyapps.science.psu.edu/",
-                                                   icon("home"))),
-                                    tags$li(class = "dropdown",
-                                            actionLink("info", icon("info"), class = "myClass"))),
-                    dashboardSidebar(
-                      sidebarMenu(
-                        id = "tabs",
-                        menuItem("Prerequisites", tabName = "prerequisite", icon = icon("book")),
-                        menuItem("Overview", tabName = "overview", icon = icon("dashboard")),
-                        menuItem("Challenge", tabName = "Hangman", icon = icon("cogs"))
-                      )
+#Let us begin
+ui <- dashboardPage(
+  skin = "yellow",
+  dashboardHeader(
+    titleWidth = 250,
+    title = "Measures of Association",
+    tags$li(
+      class = "dropdown",
+      actionLink("info", icon("info"))
+    ),
+    tags$li(
+      class = "dropdown",
+      tags$a(href = "https://shinyapps.science.psu.edu/", icon("home"))
+    )
+  ),
+  dashboardSidebar(
+    width = 250,
+    sidebarMenu(
+    id = "tabs",
+    menuItem("Overview", tabName = "overview", icon = icon("tachometer-alt")),
+    menuItem("Prerequisites", tabName = "prerequisite", icon = icon("book")),
+    menuItem("Game", tabName = "game", icon = icon("gamepad")),
+    menuItem("References", tabName = "References", icon = icon("leanpub"))
+               ),
+    tags$div(class = "sidebar-logo",
+             boastUtils::psu_eberly_logo("reversed"))
+    ),
+  dashboardBody(
+    tags$head(
+      tags$link(rel = "stylesheet", type = "text/css",
+                href = "https://educationshinyappteam.github.io/Style_Guide/theme/boast.css")
+      ),
+    tabItems(
+      ##First tab - Overview Tab----
+      tabItem(
+        tabName = "overview",
+        h1("Measures of Association"),
+        p("In this app, you will explore measures of association to test
+           your ability to distinguish increased risk, probability, risk,
+           relative risk, odds, and odds ratio."),
+        br(),
+        h2("Instructions"),
+        tags$ol(
+          tags$li(
+            "Review the different quantities on the ",
+            actionLink(
+              inputId = "linkPreq",
+              label = "Prerequisites",
+              class = "bodylinks"
+              ),
+            "page."
+          ),
+          tags$li(
+            "You'll start the game with a man relaxing on top of a tree and
+            a scenario displayed."
+                 ),
+          tags$li(
+            "For each scenario, you'll need to correctly identify which type of
+            measure is each number that gets displayed.
+            Press the Submit button to check your work."
+                 ),
+          tags$li(
+            "If you misidentify any values, the man will fall down to
+            the next branch. If you correctly identify all of the values,
+            you'll have completed that scenario."
+                 ),
+          tags$li(
+            "Your goal is to complete 10 scenarios before the man falls
+            to the ground. The man will fall to the ground after four mistakes."
+                 )
+          ),
+          p(
+            "Note: if you misidentify all of the values for a scenario, you won't
+            be able to move beyond that scenario until you correctly identify at
+            least one value. Use the Re-attempt button to make a new attempt at
+            identifying the values in the current scenario. Press the RESET button
+            if you wish to start the game over."
+          ),
+        br(),
+        div(
+          style = "text-align:center",
+          bsButton(
+            inputId = "go1",
+            label = "GO!",
+            icon("bolt"),
+            size = "large"
+          )
+        ),
+        #Acknowledgements
+        br(),
+        br(),
+        h2("Acknowledgements"),
+        p(
+          "This app was originally developed and coded by Zhiliang Zhang.
+          The app was further updated by Daehoon Gwak in June 2020.
+          Special thanks to Luxin Wang and professor Neil Hatfield
+          for helping with some programming issues.",
+          br(),
+          br(),
+          br(),
+          div(class = "updated", "Last Update: 7/18/2020 by DG.")
+         )
+        ),
+      ##Second tab - Prerequisite Tab ----
+      tabItem(
+        withMathJax(),
+        tabName = "prerequisite",
+        h2("Prerequisites"),
+        br(),
+        box(
+          title = "Probability",
+          p("Probability is the long-run relative frequency of a particular data
+            event occurring, given our assumptions about a repeatable process.
+            For example, if we were to imagine running a lottery to picka US
+            citizen, the probability of picking a female is 50.8%. Thus, 50.8% of
+            the time we repeat carrying out this lottery (always starting from
+            the same initial population), we will pick a female."),
+          collapsible = TRUE,
+          collapsed = TRUE,
+          footer= "Probability is not a measure of association.",
+          width = 12
+        ),
+        box(
+          title = "Risk",
+          p("Risk refers to the probability of a data event that we view as being
+            negative, undesirable, or 'bad'. For example, the lifetime risk of
+            developing skin cancer is about 2.6% (1/38) for white Americans.
+            Thus, we if imagine a process of picking white Americans and
+            observing their lifetimes, 2.6% of the time we will pick an
+            individual who will develop skin cancer."),
+          collapsible = TRUE,
+          collapsed = TRUE,
+          footer= "Risk is not a measure of association.",
+          width = 12
+        ),
+        box(
+          title = "Relative Risk",
+          p("Relative Risk (RR) is the ratio of two groups' risk (probability)
+            for a particular data event. We often calculate relative risk
+            through the formula \\[RR=\\frac{\\text{Risk for Group 1}}
+            {\\text{Risk for Group 2}}\\] For example, the relative risk of skin
+            cancer for a white American is \\(2.6\\%/0.1\\% = 0.026/0.001 = 26\\)
+            times as large as Black Americans."),
+          collapsible = TRUE,
+          collapsed = TRUE,
+          footer= "Relative Risk is a measure of association.",
+          width = 12
+        ),
+        box(
+          title = "Increased Risk",
+          p("Increased Risk (IR) is relative risk expressed as a percentage
+            increase over the lower risk group. As a formula \\[IR=
+            \\left(\\text{Relative Risk}-1\\right)*100\\%\\] For example, since
+            the relative risk of skin cancer for a white American is 26 times
+            higher compared to Black Americans, then the increased risk is 2500%."),
+          collapsible = TRUE,
+          collapsed = TRUE,
+          footer= "Increased Risk is a measure of association.",
+          width = 12
+        ),
+        box(
+          title = "Odds",
+          p("Odds is the ratio of two probabilities--the probability of a data
+            event and the probability of that data event not happening (i.e.,
+            the complement or the opposite event). There are two ways that odds
+            are expressed: as a fraction or using 'odds notation' with a colon.
+            Letting \\(p=\\frac{x}{N}\\) represent the probability of a data event
+            happening, \\[\\text{Odds}=\\frac{p}{1-p}=\\frac{x/N} {(N-x)/N}
+            \\equiv X:(N-X)\\] We read odds notation, \\(X:Y\\) as 'X to Y'.",
+            br(),
+            "For example, the probability (risk) of a white American getting skin
+            cancer is 2.6%, approximately \\(\\frac{1}{38}\\). Thus the odds of
+            a white American getting skin cancer are 1:37. For Black Americans,
+            the odds of getting skin cancer are 1:999."),
+          collapsible = TRUE,
+          collapsed = TRUE,
+          footer= "Odds is not a measure of association.",
+          width = 12
+        ),
+        box(
+          title = "Odds Ratio",
+          p("An odds ratio is the ratio of the odds for two groups of the same/
+            similar data event. Suppose that the first group has a probability
+            of the data event of p and the second group has a probability of r.
+            Then \\[\\text{Odds Ratio}=\\frac{p}{1-p}\\bigg/\\frac{r}{1-r}\\]",
+            br(),
+            "For example, we found the odds of a white American (1:37) and a
+            Black American (1:999) getting skin cancer. The odds ratio for these
+            two groups would be \\[\\frac{1/38}{37/38}\\bigg/
+            \\frac{1/1000}{999/1000}\\approx 26.667\\]"),
+          collapsible = TRUE,
+          collapsed = TRUE,
+          footer= "Odds Ratio is a measure of association.",
+          width = 12
+        ),
+        p(tags$em("Note:"), " there are other measures of association that are
+          not covered by this app. For example, Pearson's Correlation, Spearman's
+          Rho, and Kendall's Tau."),
+        br(),
+        div(
+          style = "text-align:center",
+          bsButton(
+            inputId = "go2",
+            label = "GO!",
+            icon("bolt"),
+            size = "large"
+          )
+        )
+      ),
+      ## Third tab - Game Tab ----
+      tabItem(
+        tabName = "game",
+        h2("Identifying Values"),
+        p("Read through each context carefuly. For the four given values,
+          identify what type of value each one is."),
+        h3("The Context"),
+        uiOutput("question"),
+        br(),
+        fluidRow(
+          # this column is for the selectInput
+          column(
+            width = 5,
+            wellPanel(
+              h3('Identify These Values'),
+              br(),
+              fluidRow(
+                column(
+                  width = 9,
+                  selectInput(
+                    inputId = 'first',
+                    label = 'first value',
+                    choices = list(
+                      'Select Answer',
+                      'Increased Risk',
+                      'Odds',
+                      'Odds Ratio',
+                      'Probability',
+                      'Relative Risk',
+                      'Risk'
                     ),
-                    
-                    dashboardBody(
-                      tags$head(
-                        tags$link(rel = "stylesheet", type = "text/css", href = "Feature.css"),
-                        tags$style(HTML(
-                          '.popover-title{
-                          color:black;
-                          font-size:18px;
-                          background-color: orange
-                          }'
-                        ))
-                        
-                        ),
-                      
-                      tabItems( 
-                        # Prerequiste Tab
-                        tabItem(tabName = "prerequisite",
-                                h3(strong("Background: Measures of Association")),
-                                br(),
-                                h3(tags$li("Probability:")),
-                                h4("Probability is the likelihood of an event in relation to all possible events."),
-                                h5("Ex) If a horse wins 1 out of every 5 races, its probability of winning is 1/5 (20%)."),
-                                br(),
-                                h3(tags$li("Risk & Relative Risk:")),
-                                h4("A risk is a probability of a bad outcome."),
-                                h5("Ex) If 1% of women's cars are stolen, the risk of a woman's car being stolen is 1 out of 100."),
-                                h4("Relative risk (RR) is the ratio of probabilities for two groups."), 
-                                h5("Ex) The risk of having a heart attack in the next five years for men divided by the same risk for women."), 
-                                h4("In essence:"), 
-                                tags$a(tags$img(src = 'rr.png', align = "center")),
-                                
-                                br(),
-                                h3(tags$li("Odds & Odds Ratio:")),
-                                h4("Odds compare events with the opposite event."), 
-                                h5("Ex) If a horse wins 1 out of every 5 races, its odds of winning are 1 to 4
-                                   (expressed as 1:4) since it wins one race for every 4 it loses."), 
-                                h4("An odds ratio  is the ratio of the odds for two groups."), 
-                                h5("Ex) the odds for having a heart attack in the next five years for
-                                   men divided by the corresponding odds for women."),  
-                                #h4("When data is displayed in a 2 x 2 table, 
-                                #   the odds ratio is sometimes called the 'cross product ratio' as its estimate is calculated as the product of the values on one 
-                                #   diagonal divided by the product of the values on the opposite diagonal."),
-                                br(),
-                                div(style = "text-align:center",
-                                    bsButton(inputId = "nextbutton",
-                                             label = "Go to the overview",
-                                             icon("wpexplorer"),
-                                             size = "large",
-                                             style = "warning"))),
-                        
-                        #Overview Tab
-                        tabItem(tabName = "overview",
-                                tags$a(href = 'http://stat.psu.edu/', tags$img(src = 'logo.png', align = "left", width = 180)),
-                                br(),
-                                br(),
-                                br(),
-                                h3(strong("About:")),
-                                h4("In this app, you will explore measures of associations and test your ability to distinguish probability, risk, relative risk, odds and odds ratio."),
-                                br(),
-                                h3(strong("Instructions:")),
-                                h4(tags$li("You'll start this game with nothing on the gallows, once you
-                                            have at least one answer wrong, a part of the body will be drawn,
-                                           and if the whole little man is completely drawn, then you have lost this game.")),
-                                h4(tags$li("Choose different measure of associations for each numeric value, then click 'Submit' to check your answer.")),
-                                h4(tags$li("If you got every question correct, then you can click
-                                           'Next Question' to move on your challenge, otherwise a part of body will be drawn on the image.")),
-                                h4(tags$li("You cannot revise your answer once you click 'Submit', so think carefully before submit.")),
-                                br(),
-                                div(style = "text-align:center",
-                                    bsButton("go",
-                                             label = "GO!",
-                                             icon("bolt"),
-                                             size = "large",
-                                             style = "warning",
-                                             class = "circle grow")),
-                                br(),
-                                h3(strong("Acknowledgements:")),
-                                h4("This app was developed and coded by Zhiliang Zhang. Special thanks to Luxin Wang for helping some programming issues.")
-                        ),
-                        
-                        
-                        
-                        # Challenge Tab
-                        
-                        tabItem(tabName = "Hangman",
-                                #div(style="display: inline-block;vertical-align:top;",
-                                #    tags$a(href='https://shinyapps.science.psu.edu/',tags$img(src='homebut.PNG', width = 19))
-                                #),
-                                #div(style="display: inline-block;vertical-align:top;",
-                                #    circleButton("info",icon = icon("info"), status = "myClass",size = "xs")
-                                #),
-                                titlePanel("Choose the Correct Measure of Association"),
-                                
-                                
-                                wellPanel(#style = "background-color: #eaf2f8",
-                                          
-                                          uiOutput("question"),
-                                          tags$style(type = 'text/css', '#question {font-weight:bold;font-size: 20px; color: black;}')
-                                          
-                                ),
-                                
-                                sidebarLayout(
-                                  sidebarPanel(div(#style = "background-color: #eaf2f8",
-                                    
-                                    #wellPanel(style = "background-color: #EAF2F8",
-                                    #          fluidRow(
-                                    #            uiOutput("result")
-                                    #          )),
-                                    #fluidRow(
-                                      
-                                    #  bsButton('reset','RELOAD', size = 'large', style = 'warning',disabled = TRUE),
-                                    #  bsButton('restart','RESTART',size = 'large', style = 'primary',disabled = TRUE)
-                                    #),
-                                    
-                                    fluidRow(h3("Choose the measure of association for the following: "),
-                                             uiOutput('box1'), selectInput('first', "", c("Select Answer",'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
-                                             uiOutput('mark1'),
-                                             uiOutput('box2'),selectInput('second', "", c("Select Answer", 'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
-                                             uiOutput('mark2')),
-                                    fluidRow(uiOutput('box3'),selectInput('third', "", c("Select Answer", 'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
-                                             uiOutput('mark3'),
-                                             uiOutput('box4'),selectInput('fourth', "", c("Select Answer", 'Relative Risk', 'Risk', 'Odds', 'Odds Ratio', "Probability"), width = '30%'),
-                                             uiOutput('mark4')),
-                                    
-                                    br(),
-                                  div(style = "text-align:left",
-                                      fluidRow(
-                                      column(3,  
-                                             bsButton(inputId = 'submit',
-                                                      label = "Submit",
-                                                      size = "medium",
-                                                      style = "warning",
-                                                      disabled = FALSE)),
-                                div(style = "text-align:left",
-                                    column(3,
-                                           bsButton(inputId = 'nextq',
-                                                    label = "Next Question",
-                                                    size = "medium",
-                                                    style = "success",
-                                                    disabled = TRUE))))),
-                                    br(),
-                                    br(),
-                                    
-
-                                    tags$head(tags$style(HTML("#result {font-weight:bold;}")))
-                                    
-                                    
-                                  )),
-                                  
-                                  mainPanel(
-                                    
-                                    br(),
-                                    
-                                    fluidRow(
-                                      uiOutput("correct", align = 'center')
-                                    ),
-                                    
-                                    br(),
-                                    br(),
-                                    
-                                    fluidRow(
-                                      column(6, offset = 2,
-                                             uiOutput("distPlot", width = "100%"))),
-                                    br(),
-                                    br(),
-                                    br()
-                                    
-                                    # bsPopover("distPlot", " ","Choose different measure of association for each numeric value, then click Submit to check your answer", place="left")
-                                    
-                                    
-                                  ),
-                                  position = "left"
-                                  
-                                )
-                                
-                                
-                                ####Previous Layout####
-                                
-                                # wellPanel(
-                                #   
-                                #   fluidRow(
-                                #     h3("Identify the measure association of the following numeric values: ")
-                                #   ),
-                                # 
-                                #   column(3,
-                                #         selectInput('first',uiOutput('box1'),c('Relative Risk', 'Risk', 'Odds Ratio', "Probability")),
-                                #         uiOutput('mark1')),
-                                #   column(3, 
-                                #          selectInput('second',uiOutput('box2'),c('Relative Risk', 'Risk', 'Odds Ratio', "Probability")),
-                                #          uiOutput('mark2')),
-                                #   column(3,
-                                #          selectInput('third',uiOutput('box3'),c('Relative Risk', 'Risk', 'Odds Ratio', "Probability")),
-                                #          uiOutput('mark3') ),
-                                #   column(3,
-                                #          selectInput('fourth',uiOutput('box4'),c('Relative Risk', 'Risk', 'Odds Ratio', "Probability")),
-                                #          uiOutput('mark4')),
-                                #   # fluidRow(
-                                #   #   column(4, offset= 7,
-                                #   #    verbatimTextOutput("result")     
-                                #   #   )
-                                #   # ),
-                                #     
-                                # fluidRow(
-                                # column(3, offset=7,
-                                #          verbatimTextOutput("result"))),
-                                # 
-                                # plotOutput("distPlot",width = "50%"),
-                                # 
-                                # 
-                                # column(2, offset=6,
-                                #        bsButton('nextq', "Next Question", size ="large", style="success",disabled=TRUE)),
-                                # column(2, offset = 6,
-                                #        bsButton('submit', "Submit", size= "large", style ="warning", disabled =FALSE)),
-                                # 
-                                # tags$head(tags$style(HTML("#result {font-size: 18px;background-color:white}"))),
-                                # 
-                                # bsPopover("disPlot", " ","Choose different measure of association for each numeric value, then click Submit to check your answer", place="right"),
-                                # 
-                                # br(),
-                                # br(),
-                                # br(),
-                                # br(),
-                                # br()
-                                # 
-                                # 
-                                # 
-                                # )
-                                
-                                
-                        )
-                        
-                                )
-                      
-                        )
-                    
-                      )
-
-
-
-
+                    selectize = FALSE
+                  )
+                ),
+                column(
+                  width = 3,
+                  uiOutput(
+                    outputId = 'mark1'
+                    #inline = TRUE
+                  )
+                )
+              ),
+              fluidRow(
+                column(
+                  width = 9,
+                  selectInput(
+                    inputId = 'second',
+                    label = "second value",
+                    choices = list(
+                      'Select Answer',
+                      'Increased Risk',
+                      'Odds',
+                      'Odds Ratio',
+                      'Probability',
+                      'Relative Risk',
+                      'Risk'
+                    ),
+                    selectize = FALSE
+                  )
+                ),
+                column(
+                  width = 3,
+                  uiOutput(
+                    outputId = "mark2",
+                    #inline = TRUE
+                  )
+                )
+              ),
+              fluidRow(
+                column(
+                  width = 9,
+                  selectInput(
+                    inputId = 'third',
+                    label = 'third value',
+                    choices = list(
+                      'Select Answer',
+                      'Increased Risk',
+                      'Odds',
+                      'Odds Ratio',
+                      'Probability',
+                      'Relative Risk',
+                      'Risk'
+                      ),
+                    selectize = FALSE
+                  )
+                ),
+                column(
+                  width = 3,
+                  uiOutput(
+                    outputId = 'mark3',
+                    #inline = TRUE
+                  )
+                )
+              ),
+              fluidRow(
+                column(
+                  width = 9,
+                  selectInput(
+                    inputId = 'fourth',
+                    label = 'fourth value',
+                    choices = list(
+                      'Select Answer',
+                      'Increased Risk',
+                      'Odds',
+                      'Odds Ratio',
+                      'Probability',
+                      'Relative Risk',
+                      'Risk'
+                      ),
+                    selectize = FALSE
+                  )
+                ),
+                column(
+                  width = 3,
+                  uiOutput(
+                    outputId = 'mark4'
+                    #inline = TRUE
+                    )
+                  )
+                )
+              )
+          ),
+          # this column is for the score tree image
+          column(width = 7,
+            uiOutput("correct", align = 'center'),
+              div(
+                imageOutput(outputId = "scoreTree", inline = TRUE),
+                align = 'center')
+            )
+          ),
+        # this row is for the buttons
+        fluidRow(
+          column(
+            width = 2,
+            offset = 1,
+            bsButton(
+              inputId = 'submit',
+              label = "Submit",
+              size = "large",
+              disabled = FALSE
+            )
+          ),
+          column(
+            width = 2,
+            offset = 1,
+            bsButton(
+              'reattempt',
+              'Re-attempt',
+              size = 'large',
+              disabled = TRUE
+            )
+          ),
+          column(
+            width = 2,
+            offset = 1,
+            bsButton(
+              inputId = 'nextq',
+              label = "Next >>",
+              size = "large",
+              disabled = TRUE
+            )
+          ),
+          column(
+            width = 2,
+            offset = 1,
+            bsButton(
+              inputId = 'reset',
+              label = "RESET",
+              size = "large",
+              disabled = TRUE
+            )
+          ),
+          br()
+        )
+      ),
+      tabItem(
+        tabName = "References",
+        h2("References"),
+        p(     #shinyBS
+          class = "hangingindent",
+          "Bailey, E. (2015), shinyBS: Twitter bootstrap components for shiny.
+            (v0.61), [R package]. Available from
+            https://CRAN.R-project.org/package=shinyBS"
+        ),
+        p(     #Boast Utilities
+          class = "hangingindent",
+          "Carey, R. (2019), boastUtils: BOAST Utilities. (v0.1.0),
+            [R Package]. Available from
+            https://github.com/EducationShinyAppTeam/boastUtils"
+        ),
+        p(     #shinydashboard
+          class = "hangingindent",
+          "Chang, W. and Borges Ribeio, B. (2018), shinydashboard: Create
+            dashboards with 'Shiny'. (v0.7.1), [R Package]. Available from
+            https://CRAN.R-project.org/package=shinydashboard"
+        ),
+        p(     #shiny
+          class = "hangingindent",
+          "Chang, W., Cheng, J., Allaire, J., Xie, Y., and McPherson, J.
+            (2019), shiny: Web application framework for R. (v1.4.0),
+            [R Package]. Available from https://CRAN.R-project.org/package=shiny"
+        ),
+        p(     #skin cancer
+          class = "hangingindent",
+          " Key Statistics for Melanoma Skin Cancer (n.d.), Available from
+          https://www.cancer.org/cancer/melanoma-skin-cancer/about/key-statistics.html"
+        ),
+        p(     #shinyWidgets
+          class = "hangingindent",
+          "Perrier, V., Meyer, F., Granjon, D., Fellows, I., and Davis, W.
+            (2020), shinyWidgets: Custom Inputs Widgets for Shiny
+            (v0.5.2), [R package]. Available from
+            https://cran.r-project.org/web/packages/shinyWidgets/index.html"
+        ),
+        br(),
+        br(),
+        br(),
+        boastUtils::copyrightInfo()
+      )
+    )
+  )
+)

@@ -1,673 +1,550 @@
-library(shinydashboard)
-library(shiny)
-library(shinyjs)
-library(shinyBS)
-library(plotrix)
-library(shinyWidgets)
-library(rlocker)
+library(boastUtils)
 
+# Read in questions ----
 bank <- read.csv("questionbank.csv")
 bank = data.frame(lapply(bank, as.character), stringsAsFactors = FALSE)
 
-
+# Set up shiny server ---
 shinyServer(function(session, input, output) {
-  
-  #Initialized learning  locker connection
-  connection <- rlocker::connect(session, list(
-    base_url = "https://learning-locker.stat.vmhost.psu.edu/",
-    auth = "Basic ZDQ2OTNhZWZhN2Q0ODRhYTU4OTFmOTlhNWE1YzBkMjQxMjFmMGZiZjo4N2IwYzc3Mjc1MzU3MWZkMzc1ZDliY2YzOTNjMGZiNzcxOThiYWU2",
-    agent = rlocker::createAgent()
-  ))
-  
-  # Setup demo app and user.
-  currentUser <- 
-    connection$agent
-  
-  if(connection$status != 200){
-  }
-  
-  observeEvent(input$info,{
+  # Define info button ----
+  observeEvent(input$info, {
     sendSweetAlert(
       session = session,
-      title = "Instructions:",
-      text = "Choose the Measure of Association in the dropdown menu with the number in the context described.",
+      title = "Instructions",
+      text = tags$ol(
+        tags$li("You need to find an appropriate measure that goes with the
+                numerical value."),
+        tags$li("You have 4 chances to save the poor little man and you need to
+                get 10 scenarios correct."),
+        tags$li("Remember, if you miss any question on the scenario, then the
+                man will drop down to the next branch.")
+      ),
       type = "info"
     )
   })
-  observeEvent(input$nextbutton, {
-    
-    updateTabItems(session, "tabs", "overview")
-    
+  
+  # Set Prereqs link ----
+  observeEvent(input$linkPreq, {
+    updateTabItems(session, "tabs", "prerequisite")
   })
   
-  observeEvent(input$go, {
-    updateTabItems(session, "tabs", "Hangman")
+  # Define the two go2 buttons
+  observeEvent(input$go1, {
+    updateTabItems(session, "tabs", "prerequisite")
   })
   
-  observeEvent(input$submit, {
-    updateButton(session, "nextq", disabled = FALSE)
-    updateButton(session, "submit", disabled = TRUE)
+  observeEvent(input$go2, {
+    updateTabItems(session, "tabs", "game")
   })
   
-  
-  observeEvent(input$nextq, {
-    updateButton(session, "submit", disabled = FALSE)
-    updateButton(session, "nextq", disabled = TRUE)
-    
-    updateSelectInput(session, "first","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "second","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "third","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "fourth","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    
-    #output$result <- renderUI({
-    #  h3("Choose different measure of associations for each numeric value, then click 'Submit' to check your answer")
-    #})
-    
-  })
-  
-  observeEvent(input$restart,{
-    updateButton(session, "submit", disabled = FALSE)
-    updateButton(session,"restart",disable =TRUE)
-    #output$result <- renderUI({
-    #  h3("Choose different measure of associations for each numeric value, then click 'Submit' to check your answer")
-    #})
-    updateSelectInput(session, "first","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "second","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "third","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "fourth","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    
-    index_list$list<-c(index_list$list,sample(2:15,14,replace=FALSE))
-    value$index <- 1
-    value$box1= 4*value$index-3
-    value$box2= 4*value$index-2
-    value$box3= 4*value$index-1
-    value$box4= 4*value$index
-    correct_answer <- as.matrix(bank[1:60,1])
-    
-    output$mark1 <- renderUI({
-      img(src = NULL,width = 20)
-    })
-    output$mark2 <- renderUI({
-      img(src = NULL,width = 20)
-    })
-    output$mark3 <- renderUI({
-      img(src = NULL,width = 20)
-    })
-    output$mark4 <- renderUI({
-      img(src = NULL,width = 20)
-    })
-    
-    value$correct <- 0;
-  })
-  
-  output$box1 <- renderUI({
-    uiOutput('box1')
-  })
-  output$box2 <- renderUI({
-    
-    uiOutput('box2')
-  })
-  
-  output$box3 <- renderUI({
-    
-    uiOutput('box3')
-  })
-  
-  output$box4 <- renderUI({
-    
-    uiOutput('box4')  
-  })
-  #output$result <- renderUI({
-   # h3("Choose different measure of associations for each numeric value, then click 'Submit' to check your answer")
-  #})
-  
+  ## variables
+  # gameProgress to check whether the user enter the game first time or continue
+  gameProgress <- FALSE
   
   value <- reactiveValues(index =  15, mistake = 0, correct = 0)
-  correct_answer <- as.matrix(bank[1:60,1])
+  correct_answer <- as.matrix(bank[1:60,1]) # first column of the question bank
+  # use for scenarios. Make this variable class = 'list'. 
+  # Also, do not pull the value that was took out before
+  index_list <- reactiveValues(list=sample(1:14,14,replace=FALSE)) 
   
-  index_list<-reactiveValues(list=sample(1:14,14,replace=FALSE))
-  
-  
-  observeEvent(input$reset,{
-    index_list$list<-c(index_list$list,sample(2:15,14,replace=FALSE))
-    value$index <- 1
-    value$box1= 4*value$index-3
-    value$box2= 4*value$index-2
-    value$box3= 4*value$index-1
-    value$box4= 4*value$index
-    correct_answer <- as.matrix(bank[1:60,1])
-    
-    updateButton(session,"submit",disabled = FALSE)
-    updateButton(session,"reset", disabled = TRUE)
-    
-    #output$result <- renderUI({
-    #  h3("Choose different measure of associations for each numeric value, then click 'Submit' to check your answer")
-    #})
-    
-    updateSelectInput(session, "first","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "second","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "third","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    updateSelectInput(session, "fourth","",c('Select Answer','Relative Risk', 'Risk','Odds', 'Odds Ratio', "Probability"))
-    
-    output$mark1 <- renderUI({
-      img(src = NULL,width = 30)
-    })
-    output$mark2 <- renderUI({
-      img(src = NULL,width = 30)
-    })
-    output$mark3 <- renderUI({
-      img(src = NULL,width = 30)
-    })
-    output$mark4 <- renderUI({
-      img(src = NULL,width = 30)
-    })
-  })
-  
-  observeEvent(input$go,{
-    value$index <- 15
-    correct_answer <- as.matrix(bank[1:60,1])
-    
-    value$box1= 4*value$index-3
-    value$box2= 4*value$index-2
-    value$box3= 4*value$index-1
-    value$box4= 4*value$index
-    
-  })
-  
-  observeEvent(input$nextq,{
-    index_list$list=index_list$list[-1]   
-    value$index <- index_list$list[1]
-    
-    value$box1= 4*value$index-3
-    value$box2= 4*value$index-2
-    value$box3= 4*value$index-1
-    value$box4= 4*value$index
-    
-    if(length(index_list$list) == 1){
-      updateButton(session, "nextq", disabled = TRUE)
-      updateButton(session,"submit", disabled = TRUE)
-      updateButton(session, "reset",disabled = FALSE)
-      #output$result <- renderUI({
-      #  h3("Please click RELOAD to reload questions from database so you can continue this game")
-      #})
-    }
-    
-  })
-  output$correct <- renderUI({
-    
-    h3("Number of correct answers:" ,"", value$correct )
-  })
-  
-  observeEvent(input$submit,{
-    output$correct <- renderUI({
+  ## start challenge
+  ################ hack(input$game) ####################
+  observeEvent(input$go2,{
+    if (!gameProgress) { # if the user clicks the 'game' first time
+      value$index <- 15 # start game with the last scenario on the question bank
+      # correct_answer <- as.matrix(bank[1:60, 1]) 
+      value$box1 = 4 * value$index - 3 # first question on each scenario
+      value$box2 = 4 * value$index - 2
+      value$box3 = 4 * value$index - 1
+      value$box4 = 4 * value$index
       
-      h3("Number of correct answers:" ,"", value$correct )
-    })
-    
-  })
+      output$correct <- renderUI({ # track scores for each scenario
+        p("Number of completed scenarios: " , value$correct, " out of 10")
+      })
+      # the user can continue the game on when they come back
+      gameProgress <<- TRUE 
+    }
+  }, ignoreInit = TRUE)
   
-  observeEvent(input$nextq,{
-    output$mark1 <- renderUI({
-      img(src = NULL,width = 30)
-    })
-    output$mark2 <- renderUI({
-      img(src = NULL,width = 30)
-    })
-    output$mark3 <- renderUI({
-      img(src = NULL,width = 30)
-    })
-    output$mark4 <- renderUI({
-      img(src = NULL,width = 30)
-    })
-    
-  })
+  observeEvent(input$tabs, {
+    if (input$tabs == "game") {
+      if (!gameProgress) { #if the user clicks the 'game' first time
+        value$index <- 15 # start game with the last scenario on the question bank
+        # correct_answer <- as.matrix(bank[1:60,1])
+        value$box1= 4*value$index-3 # this is the first question on each scenario
+        value$box2= 4*value$index-2
+        value$box3= 4*value$index-1
+        value$box4= 4*value$index
+        
+        output$correct <- renderUI({
+          p("Number of completed scenarios: " , value$correct, " out of 10")
+        })
+        gameProgress <<- TRUE
+      }
+    }
+  }, ignoreInit = TRUE)
   
   
-  
+  ## scenario text
   output$question <- renderUI({
-    if(value$index == 1){
-      h3(bank[1,5])
-    }
-    else if(value$index == 2){
-      h3(bank[5,5])
-    }
-    else if(value$index == 3){
-      h3(bank[9,5])
-    }
-    else if(value$index == 4){
-      h3(bank[13,5])
-    }
-    else if(value$index == 5){
-      h3(bank[17,5])
-    }
-    else if(value$index == 6){
-      h3(bank[21,5])
-    }
-    else if(value$index == 7){
-      h3(bank[25,5])
-    }
-    else if(value$index == 8){
-      h3(bank[29,5])
-    }
-    else if(value$index == 9){
-      h3(bank[33,5])
-    }
-    else if(value$index == 10){
-      h3(bank[37,5])
-    }
-    else if(value$index == 11){
-      h3(bank[41,5])
-    }
-    else if(value$index == 12){
-      h3(bank[45,5])
-    }
-    else if(value$index == 13){
-      h3(bank[49,5])
-    }
-    else if(value$index == 14){
-      h3(bank[53,5])
-    }
-    else if(value$index == 15){
-      h3(bank[57,5])
-    }
-    
+    bank[(1 + 4 * (value$index - 1)), 5]
+  })
+
+  # Put the values to be identified as labels
+  observe({
+    # Update the first box
+    updateSelectInput(
+      session = session,
+      inputId = "first",
+      label = bank[(1 + 4 * (value$index - 1)), 4], # which scenario do you want?
+      choices = list('Select Answer', 'Increased Risk', 'Odds', 'Odds Ratio', 
+                     'Probability', 'Relative Risk', 'Risk'
+      )
+    )
+    # Update the second box
+    updateSelectInput(
+      session = session,
+      inputId = "second",
+      label = bank[(2 + 4 * (value$index - 1)), 4],
+      choices = list('Select Answer', 'Increased Risk', 'Odds', 'Odds Ratio', 
+                     'Probability', 'Relative Risk', 'Risk'
+      )
+    )
+    # Update the third box
+    updateSelectInput(
+      session = session,
+      inputId = "third",
+      label = bank[(3 + 4 * (value$index - 1)), 4],
+      choices = list('Select Answer', 'Increased Risk', 'Odds', 'Odds Ratio', 
+                     'Probability', 'Relative Risk', 'Risk'
+      )
+    )
+    # Update the fourth box
+    updateSelectInput(
+      session = session,
+      inputId = "fourth",
+      label = bank[(4 + 4 * (value$index - 1)), 4],
+      choices = list('Select Answer', 'Increased Risk', 'Odds', 'Odds Ratio', 
+                     'Probability', 'Relative Risk', 'Risk'
+      )
+    )
   })
   
-  output$box1 <- renderUI({
-    if(value$index ==1){
-      h3(bank[1,4])
-    }
-    else if(value$index ==2){
-      h3(bank[5,4])
-    }
-    else if(value$index == 3){
-      h3(bank[9,4])
-    }
-    else if(value$index == 4){
-      h3(bank[13,4])
-    }
-    else if(value$index == 5){
-      h3(bank[17,4])
-    }
-    else if(value$index == 6){
-      h3(bank[21,4])
-    }
-    else if(value$index == 7){
-      h3(bank[25,4])
-    }
-    else if(value$index == 8){
-      h3(bank[29,4])
-    }
-    else if(value$index == 9){
-      h3(bank[33,4])
-    }
-    else if(value$index == 10){
-      h3(bank[37,4])
-    }
-    else if(value$index == 11){
-      h3(bank[41,4])
-    }
-    else if(value$index == 12){
-      h3(bank[45,4])
-    }
-    else if(value$index == 13){
-      h3(bank[49,4])
-    }
-    else if(value$index == 14){
-      h3(bank[53,4])
-    }
-    else if(value$index == 15){
-      h3(bank[57,4])
-    }
-    
-  })
-  
-  output$box2 <- renderUI({
-    if(value$index ==1){
-      h3(bank[2,4])
-    }
-    else if(value$index ==2){
-      h3(bank[6,4])
-    }
-    else if(value$index == 3){
-      h3(bank[10,4])
-    }
-    else if(value$index == 4){
-      h3(bank[14,4])
-    }
-    else if(value$index == 5){
-      h3(bank[18,4])
-    }
-    else if(value$index == 6){
-      h3(bank[22,4])
-    }
-    else if(value$index == 7){
-      h3(bank[26,4])
-    }
-    else if(value$index == 8){
-      h3(bank[30,4])
-    }
-    else if(value$index == 9){
-      h3(bank[34,4])
-    }
-    else if(value$index == 10){
-      h3(bank[38,4])
-    }
-    else if(value$index == 11){
-      h3(bank[42,4])
-    }
-    else if(value$index == 12){
-      h3(bank[46,4])
-    }
-    else if(value$index == 13){
-      h3(bank[50,4])
-    }
-    else if(value$index == 14){
-      h3(bank[54,4])
-    }
-    else if(value$index == 15){
-      h3(bank[58,4])
-    }
-    
-    
-  })
-  output$box3 <- renderUI({
-    if(value$index == 1){
-      h3(bank[3,4])
-    }
-    else if(value$index == 2){
-      h3(bank[7,4])
-    }
-    else if(value$index == 3){
-      h3(bank[11,4])
-    }
-    else if(value$index == 4){
-      h3(bank[15,4])
-    }
-    else if(value$index == 5){
-      h3(bank[19,4])
-    }
-    else if(value$index == 6){
-      h3(bank[23,4])
-    }
-    else if(value$index == 7){
-      h3(bank[27,4])
-    }
-    else if(value$index == 8){
-      h3(bank[31,4])
-    }
-    else if(value$index == 9){
-      h3(bank[35,4])
-    }
-    else if(value$index == 10){
-      h3(bank[39,4])
-    }
-    else if(value$index == 11){
-      h3(bank[43,4])
-    }
-    else if(value$index == 12){
-      h3(bank[47,4])
-    }
-    else if(value$index == 13){
-      h3(bank[51,4])
-    }
-    else if(value$index == 14){
-      h3(bank[55,4])
-    }
-    else if(value$index == 15){
-      h3(bank[59,4])
-    }
-  })
-  output$box4 <- renderUI({
-    if(value$index == 1){
-      h3(bank[4,4])
-    }
-    else if(value$index == 2){
-      h3(bank[8,4])
-    }
-    else if(value$index == 3){
-      h3(bank[12,4])
-    }
-    else if(value$index == 4){
-      h3(bank[16,4])
-    }
-    else if(value$index == 5){
-      h3(bank[20,4])
-    }
-    else if(value$index == 6){
-      h3(bank[24,4])
-    }
-    else if(value$index == 7){
-      h3(bank[28,4])
-    }
-    else if(value$index == 8){
-      h3(bank[32,4])
-    }
-    else if(value$index == 9){
-      h3(bank[36,4])
-    }
-    else if(value$index == 10){
-      h3(bank[40,4])
-    }
-    else if(value$index == 11){
-      h3(bank[44,4])
-    }
-    else if(value$index == 12){
-      h3(bank[48,4])
-    }
-    else if(value$index == 13){
-      h3(bank[52,4])
-    }
-    else if(value$index == 14){
-      h3(bank[56,4])
-    }
-    else if(value$index == 15){
-      h3(bank[60,4])
-    }
-  })
-  
-  
- 
-  
-  observeEvent(input$submit,{ 
-    
+  # Submit Button Actions
+  observeEvent(input$submit, {
+    updateButton(session, "nextq", disabled = FALSE) 
+    updateButton(session, "submit", disabled = TRUE)
+    updateButton(session, "reattempt", disabled = FALSE)
+
+    ## score system & check marks ##
     output$mark1 <- renderUI({
-      
+      # check out if the selected value is correct in the correct_answer matrix
       if (any(input$first == correct_answer[value$box1,1])){
-        img(src = "check.png",width = 30)
+        img(
+          src = 'check.png',
+          alt = 'Correct',
+          width = 60
+        )
       }
       else{
-        img(src = "cross.png",width = 30)
-        
+        img(
+          src = 'cross.png',
+          alt = 'Incorrect',
+          width = 60
+        )
       }
-      
     })
-    
-  })
-  
-  observeEvent(input$submit,{ 
-    
     output$mark2 <- renderUI({
       if (any(input$second == correct_answer[value$box2,1])){
-        img(src = "check.png",width = 30)
+        img(
+          src = 'check.png',
+          alt = 'Correct',
+          width = 60
+        )
       }
       else{
-        img(src = "cross.png",width = 30)
-        
+        img(
+          src = 'cross.png',
+          alt = 'InCorrect',
+          width = 60
+        )
       }
-      
     })
-  })
-  
-  observeEvent(input$submit,{ 
-    
     output$mark3 <- renderUI({
       if (any(input$third == correct_answer[value$box3,1])){
-        img(src = "check.png",width = 30)
+        img(
+          src = 'check.png',
+          alt = 'Correct',
+          width = 60
+        )
       }
       else{
-        img(src = "cross.png",width = 30)
-        
-        
+        img(
+          src = 'cross.png',
+          alt = 'Incorrect',
+          width = 60
+        )
       }
     })
-  })
-  
-  observeEvent(input$submit,{ 
-    
     output$mark4 <- renderUI({
       if (any(input$fourth == correct_answer[value$box4,1])){
-        img(src = "check.png",width = 30)
+        img(
+          src = 'check.png',
+          alt = 'Correct',
+          width = 60
+        )
       }
       else{
-        img(src = "cross.png",width = 30)
-        
-        
+        img(
+          src = 'cross.png',
+          alt = 'InCorrect',
+          width = 60
+        )
       }
     })
-  })
-  
-  
-  ################Counting Mistakes###############  
-  observeEvent(input$submit,{
+    
+    ## Counting Mistakes 
     if(any(input$first != correct_answer[value$box1,1])||
        any(input$second != correct_answer[value$box2,1])||
        any(input$third != correct_answer[value$box3,1])||
        any(input$fourth != correct_answer[value$box4,1]))
     {
       value$mistake <- value$mistake + 1
-      
-      #output$result <- renderUI({
-      #  h3("Sorry, you have at least one wrong answer. Click 'Next Question' to move on your challenge")
-      #})
     }
-    
-    
-  })
-  
-  observeEvent(input$nextq,{
-    if(value[["mistake"]] == 4){
-      
+    # when user gets all scenarios wrong, then the user has to reset the game.
+    if(value$mistake == 4){
+      updateButton(session, "reattempt", disabled = TRUE)
+      updateButton(session, "submit", disabled = TRUE)
       updateButton(session, "nextq", disabled = TRUE)
-      
-      value[["mistake"]] <- 0
-      value$correct <- 0
-      #output$result <- renderUI({
-      #  h3("Sorry, you have lost the Game. You need to start this game from the beginning")
-        
-      #})
+      updateButton(session, "reset", disabled = FALSE)
     }
-  })
-  
-  
-  #####################Counting Correct answers##############
-  observeEvent(input$submit,{
+    
+    ## Counting Correct answers
     if(any(input$first == correct_answer[value$box1,1])&&
        any(input$second == correct_answer[value$box2,1])&&
        any(input$third == correct_answer[value$box3,1])&&
        any(input$fourth == correct_answer[value$box4,1]))
     {
       value$correct <- value$correct + 1
-      
-      #output$result <- renderUI({
-      #  h3("Congratulation! You got this one correct. Click 'Next Question' to move on your challenge")
-      #})
+      updateButton(session, "reattempt", disabled = TRUE) #disable Reattempt button
     }
-    
-    if(value$correct == 10){
-      #output$result <- renderUI({
-      #  h3("Well Done! You have completed this challenge!  You saved that poor little man!")
-      #})
+    # when the user misses all questions, then next button is disabled
+    if(any(input$first != correct_answer[value$box1,1])&&
+       any(input$second != correct_answer[value$box2,1])&&
+       any(input$third != correct_answer[value$box3,1])&&
+       any(input$fourth != correct_answer[value$box4,1]))
+    {
       updateButton(session, "nextq", disabled = TRUE)
-      updateButton(session, "restart", disabled = FALSE)
+    }
+    # when the user gets to the end, alert message shows up and reset the game
+    if(value$correct == 10){
+      confirmSweetAlert(
+        session = session,
+        inputId = "end",
+        title = "Well Done!",
+        type = "success",
+        text = p("You have completed this challenge! Thank you for saving
+                 this poor little man!"),
+        btn_labels = "Game Over",
+        btn_colors = "orange"
+      )
     }
   })
   
-  # Gets current page address from the current session
-  getCurrentAddress <- function(session){
-    return(paste0(
-      session$clientData$url_protocol, "//",
-      session$clientData$url_hostname,
-      session$clientData$url_pathname, ":",
-      session$clientData$url_port,
-      session$clientData$url_search
-    ))
-  }
+  # Next Button Actions
+  observeEvent(input$nextq, {
+    updateButton(session, inputId = 'submit', disabled = FALSE)
+    updateButton(session, inputId = 'nextq', disabled = TRUE)
+    updateButton(session, inputId = 'reattempt', disabled = TRUE)
+    
+    # number of scenario is now the first value of the list
+    value$index <- index_list$list[1] 
+    # remove the first value, so that next question starts with next value$index
+    index_list$list = index_list$list[-1]
+    # this keeps going until there are only 2 elements left 
+    # in the list in the maximum possible case.
+    
+    # value$box# should be updated
+    value$box1= 1 + 4 * (value$index - 1)
+    value$box2= 2 + 4 * (value$index - 1)
+    value$box3= 3 + 4 * (value$index - 1)
+    value$box4= 4 + 4 * (value$index - 1)
+
+    output$mark1 <- renderUI({
+      img(src = NULL)
+    })
+    output$mark2 <- renderUI({
+      img(src = NULL)
+    })
+    output$mark3 <- renderUI({
+      img(src = NULL)
+    })
+    output$mark4 <- renderUI({
+      img(src = NULL)
+    })
+  })
   
-  observeEvent(input$submit,{
+  #### Reattempt button
+  observeEvent(input$reattempt,{
+    updateButton(session, 'submit', disabled = FALSE)
+    updateButton(session, 'reattempt',disable =TRUE)
+    
+    # Update the first box
+    updateSelectInput(session = session, inputId = 'first',
+                      label = bank[(1 + 4 * (value$index - 1)), 4],
+                      choices = list('Select Answer', 'Increased Risk',
+                                     'Odds', 'Odds Ratio', 'Probability',
+                                     'Relative Risk', 'Risk')
+    )
+    # Update the second box
+    updateSelectInput(session = session, inputId = 'second',
+                      label = bank[(2 + 4 * (value$index - 1)), 4],
+                      choices = list('Select Answer', 'Increased Risk',
+                                     'Odds', 'Odds Ratio', 'Probability',
+                                     'Relative Risk', 'Risk')
+    )
+    # Update the third box
+    updateSelectInput(session = session, inputId = 'third',
+                      label = bank[(3 + 4 * (value$index - 1)), 4],
+                      choices = list('Select Answer', 'Increased Risk',
+                                     'Odds', 'Odds Ratio', 'Probability',
+                                     'Relative Risk', 'Risk')
+    )
+    # Update the fourth box
+    updateSelectInput(session = session, inputId = 'fourth',
+                      label = bank[(4 + 4 * (value$index - 1)), 4],
+                      choices = list('Select Answer', 'Increased Risk',
+                                     'Odds', 'Odds Ratio', 'Probability',
+                                     'Relative Risk', 'Risk')
+    )
+    
+    # remove marks
+    output$mark1 <- renderUI({
+      img(src = NULL)
+    })
+    output$mark2 <- renderUI({
+      img(src = NULL)
+    })
+    output$mark3 <- renderUI({
+      img(src = NULL)
+    })
+    output$mark4 <- renderUI({
+      img(src = NULL)
+    })
+  })
+  
+  #### Reset button
+  observeEvent(input$reset,{
+    # reset the index_list with another randomly generated fourteen numbers
+    index_list$list<-c(sample(1:14,14,replace=FALSE))
+    value$index <- 15
     value$box1= 4*value$index-3
     value$box2= 4*value$index-2
     value$box3= 4*value$index-1
     value$box4= 4*value$index
-    statement <- rlocker::createStatement(
-      list(
-        verb = list(
-          display = "answered"
-        ),
-        object = list(
-          id = paste0(getCurrentAddress(session), "#", value$index),
-          name = paste('Question', value$index, ":", bank[value$index*4,5]),
-          description = paste(bank[value$box1,4], bank[value$box2,4], bank[value$box3,4], bank[value$box4,4], sep =";")
-        ),
-        result = list(
-          success = (any(input$first == correct_answer[value$box1,1])&&
-                       any(input$second == correct_answer[value$box2,1])&&
-                       any(input$third == correct_answer[value$box3,1])&&
-                       any(input$fourth == correct_answer[value$box4,1])),
-          completion = (any(input$first != 'Select Answer')&&
-                          any(input$second != 'Select Answer')&&
-                          any(input$third != 'Select Answer')&&
-                          any(input$fourth != 'Select Answer')),
-          response = paste(input$first, input$second, input$third, input$fourth, correct_answer[value$box1,1], correct_answer[value$box2,1], correct_answer[value$box3,1],correct_answer[value$box4,1], sep = ";"),
-          duration = value$correct/10
-          #the total questions number to reach win is 10, the duration is the percentage of correct answers/total 10
-        )
-      )
+    
+    updateButton(session, "submit", disabled = FALSE)
+    updateButton(session, "reattempt",disable =TRUE)
+    updateButton(session, "nextq", disabled = TRUE)
+    updateButton(session, "reset", disabled = TRUE)
+    
+    # Update the first box
+    updateSelectInput(session = session, inputId = 'first',
+                      label = bank[(1 + 4 * (value$index - 1)), 4],
+                      choices = list('Select Answer', 'Increased Risk',
+                                     'Odds', 'Odds Ratio', 'Probability',
+                                     'Relative Risk', 'Risk')
+                      )
+    # Update the second box
+    updateSelectInput(session = session, inputId = 'second',
+                      label = bank[(2 + 4 * (value$index - 1)), 4],
+                      choices = list('Select Answer', 'Increased Risk',
+                                     'Odds', 'Odds Ratio', 'Probability',
+                                     'Relative Risk', 'Risk')
+                      )
+    # Update the third box
+    updateSelectInput(session = session, inputId = 'third',
+                      label = bank[(3 + 4 * (value$index - 1)), 4],
+                      choices = list('Select Answer', 'Increased Risk',
+                                     'Odds', 'Odds Ratio', 'Probability',
+                                     'Relative Risk', 'Risk')
+                      )
+    # Update the fourth box
+    updateSelectInput(session = session, inputId = 'fourth',
+                      label = bank[(4 + 4 * (value$index - 1)), 4],
+                      choices = list('Select Answer', 'Increased Risk',
+                                     'Odds', 'Odds Ratio', 'Probability',
+                                     'Relative Risk', 'Risk')
+                      )
+    
+    # remove marks
+    output$mark1 <- renderUI({
+      img(src = NULL)
+    })
+    output$mark2 <- renderUI({
+      img(src = NULL)
+    })
+    output$mark3 <- renderUI({
+      img(src = NULL)
+    })
+    output$mark4 <- renderUI({
+      img(src = NULL)
+    })
+    value$correct <- 0
+    value$mistake <- 0
+  })
+  
+  #when the game is over, alert message shows up
+  observeEvent(input$end, {
+    index_list$list<-c(sample(1:14,14,replace=FALSE))
+    value$index <- 15
+    value$box1= 4*value$index-3
+    value$box2= 4*value$index-2
+    value$box3= 4*value$index-1
+    value$box4= 4*value$index
+    
+    updateButton(session, "submit", disabled = FALSE)
+    updateButton(session, "reattempt",disable =TRUE)
+    updateButton(session, "nextq", disabled = TRUE)
+    updateButton(session, "reset", disabled = TRUE)
+    
+    # Update the first box
+    updateSelectInput(session = session, inputId = 'first',
+                      label = bank[(1 + 4 * (value$index - 1)), 4],
+                      choices = list('Select Answer', 'Increased Risk',
+                                     'Odds', 'Odds Ratio', 'Probability',
+                                     'Relative Risk', 'Risk')
+    )
+    # Update the second box
+    updateSelectInput(session = session, inputId = 'second',
+                      label = bank[(2 + 4 * (value$index - 1)), 4],
+                      choices = list('Select Answer', 'Increased Risk',
+                                     'Odds', 'Odds Ratio', 'Probability',
+                                     'Relative Risk', 'Risk')
+    )
+    # Update the third box
+    updateSelectInput(session = session, inputId = 'third',
+                      label = bank[(3 + 4 * (value$index - 1)), 4],
+                      choices = list('Select Answer', 'Increased Risk',
+                                     'Odds', 'Odds Ratio', 'Probability',
+                                     'Relative Risk', 'Risk')
+    )
+    # Update the fourth box
+    updateSelectInput(session = session, inputId = 'fourth',
+                      label = bank[(4 + 4 * (value$index - 1)), 4],
+                      choices = list('Select Answer', 'Increased Risk',
+                                     'Odds', 'Odds Ratio', 'Probability',
+                                     'Relative Risk', 'Risk')
     )
     
-    # Store statement in locker and return status
-    status <- rlocker::store(session, statement)
-    
-    #print(statement) # remove me
-    #print(status) # remove me
+    output$mark1 <- renderUI({
+      img(src = NULL)
+    })
+    output$mark2 <- renderUI({
+      img(src = NULL)
+    })
+    output$mark3 <- renderUI({
+      img(src = NULL)
+    })
+    output$mark4 <- renderUI({
+      img(src = NULL)
+    })
+    value$correct <- 0
+    value$mistake <- 0
   })
   
+  #### Rlocker issue. Please deal with this - Bob or Neil. Thank you! ####
+  # Gets current page address from the current session
+  # getCurrentAddress <- function(session){
+  #   return(paste0(
+  #     session$clientData$url_protocol, "//",
+  #     session$clientData$url_hostname,
+  #     session$clientData$url_pathname, ":",
+  #     session$clientData$url_port,
+  #     session$clientData$url_search
+  #   ))
+  # }
+  # observeEvent(input$submit,{
+  #   value$box1= 4*value$index-3
+  #   value$box2= 4*value$index-2
+  #   value$box3= 4*value$index-1
+  #   value$box4= 4*value$index
+  #   statement <- rlocker::createStatement(
+  #     list(
+  #       verb = list(
+  #         display = "answered"
+  #       ),
+  #       object = list(
+  #         id = paste0(getCurrentAddress(session), "#", value$index),
+  #         name = paste('Question', value$index, ":", bank[value$index*4,5]),
+  #         description = paste(bank[value$box1,4], bank[value$box2,4],
+  #                             bank[value$box3,4], bank[value$box4,4], sep =";")
+  #       ),
+  #       result = list(
+  #         success = (any(input$first == correct_answer[value$box1,1])&&
+  #                      any(input$second == correct_answer[value$box2,1])&&
+  #                      any(input$third == correct_answer[value$box3,1])&&
+  #                      any(input$fourth == correct_answer[value$box4,1])),
+  #         completion = (any(input$first != 'Select Answer')&&
+  #                         any(input$second != 'Select Answer')&&
+  #                         any(input$third != 'Select Answer')&&
+  #                         any(input$fourth != 'Select Answer')),
+  #         response = paste(input$first, input$second, input$third,
+  #                          input$fourth, correct_answer[value$box1,1],
+  #                          correct_answer[value$box2,1],
+  #                          correct_answer[value$box3,1],
+  #                          correct_answer[value$box4,1], sep = ";"),
+  #         duration = value$correct/10
+  #         #the total questions number to reach win is 10, the duration is
+  #         #the percentage of correct answers/total 10
+  #       )
+  #     )
+  #   )
+  #   # Store statement in locker and return status
+  #   status <- rlocker::store(session, statement)
+  # })
+
   ##### Draw the Hangman Game#####
-  
-  output$distPlot <- renderUI({
-    
+  output$scoreTree <- renderImage({
     ## Background
     if(value$mistake == 0){
-      img(src = "Cell01.jpg", width = 500)
-      
+      return(list(
+        src = "www/Cell01.jpg",
+        contentType = "image/jpg",
+        alt = "This is first tree which shows you are fine."
+        ))
     }
-    
     ## Head
     else if(value$mistake == 1 ) {
-      img(src = "Cell02.jpg", width = 500)
+      return(list(
+        src = "www/Cell02.jpg",
+        contentType = "image/jpg",
+        alt = "This is the second tree which shows you lose one life."
+        ))
     }
-    
     ## Arms
     else if(value$mistake == 2) {
-      img(src = "Cell03.jpg", width = 500)
+      return(list(
+        src = "www/Cell03.jpg",
+        contentType = "image/jpg",
+        alt = "This is the third tree which shows you only have two lives."
+      ))
     }
-    
     ## Body
     else if(value$mistake == 3 ) {
-      img(src = "Cell04.jpg", width = 500)
+      return(list(
+        src = "www/Cell04.jpg",
+        contentType = "image/jpg",
+        alt = "This is the fourth tree which shows you only have one life."
+      ))
     }
-    
-    
     ## Legs
     else if(value$mistake == 4) {
-      img(src = "Cell05.jpg", width = 500)
+      return(list(
+        src = "www/Cell05.jpg",
+        contentType = "image/jpg",
+        alt = "This is the last tree which shows you are dead."
+      ))
     }
-    
-  })
-  
-  
-  
+  }, deleteFile=FALSE)
 })
-
-
-
