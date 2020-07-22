@@ -1,8 +1,8 @@
 library(shinydashboard)
 library(shiny)
 library(shinyBS)
-library(shinyWidgets)
 library(boastUtils)
+
 #Let us begin
 ui <- dashboardPage(
   skin = "yellow",
@@ -98,7 +98,7 @@ ui <- dashboardPage(
         p(
           "This app was originally developed and coded by Zhiliang Zhang.
           The app was further updated by Daehoon Gwak in June 2020.
-          Special thanks to Luxin Wang and professor Neil Hatfield 
+          Special thanks to Luxin Wang and professor Neil Hatfield
           for helping with some programming issues.",
           br(),
           br(),
@@ -294,7 +294,7 @@ ui <- dashboardPage(
                       'Probability',
                       'Relative Risk',
                       'Risk'
-                      ), 
+                      ),
                     selectize = FALSE
                   )
                 ),
@@ -337,41 +337,46 @@ ui <- dashboardPage(
           # this column is for the score tree image
           column(width = 7,
             uiOutput("correct", align = 'center'),
-              div(imageOutput(outputId = "scoreTree", inline = TRUE), align = 'center')
+              div(
+                imageOutput(outputId = "scoreTree", inline = TRUE),
+                align = 'center')
             )
           ),
         # this row is for the buttons
         fluidRow(
           column(
-            1,
+            width = 2,
+            offset = 1,
             bsButton(
               inputId = 'submit',
               label = "Submit",
               size = "large",
-              style = "warning",
               disabled = FALSE
             )
           ),
           column(
-            1,
-            offset = 4,
+            width = 2,
+            offset = 1,
             bsButton(
               'reattempt',
               'Re-attempt',
               size = 'large',
-              style = "danger",
               disabled = TRUE
             )
           ),
           column(
-            1,
-            offset = 4,
+            width = 2,
+            offset = 1,
             bsButton(
               inputId = 'nextq',
               label = "Next >>",
               size = "large",
               disabled = TRUE
-            ),
+            )
+          ),
+          column(
+            width = 2,
+            offset = 1,
             bsButton(
               inputId = 'reset',
               label = "RESET",
@@ -420,7 +425,11 @@ ui <- dashboardPage(
             (2020), shinyWidgets: Custom Inputs Widgets for Shiny
             (v0.5.2), [R package]. Available from
             https://cran.r-project.org/web/packages/shinyWidgets/index.html"
-        )
+        ),
+        br(),
+        br(),
+        br(),
+        boastUtils::copyrightInfo()
       )
     )
   )
