@@ -30,6 +30,12 @@ ui <- list(
       ),
       tags$li(
         class = "dropdown",
+        tags$a(target = "_blank", icon("comments"),
+               href = "https://pennstate.qualtrics.com/jfe/form/SV_7TLIkFtJEJ7fEPz?appName=Measures_of_Association"
+        )
+      ),
+      tags$li(
+        class = "dropdown",
         tags$a(href = "https://shinyapps.science.psu.edu/", icon("home"))
       )
     ),
