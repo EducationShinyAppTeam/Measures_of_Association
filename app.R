@@ -43,7 +43,7 @@ ui <- list(
     dashboardSidebar(
       width = 250,
       sidebarMenu(
-        id = "tabs",
+        id = "pages",
         menuItem("Overview", tabName = "overview", icon = icon("tachometer-alt")),
         menuItem("Prerequisites", tabName = "prerequisite", icon = icon("book")),
         menuItem("Game", tabName = "game", icon = icon("gamepad")),
@@ -139,7 +139,7 @@ ui <- list(
             title = "Probability",
             p("Probability is the long-run relative frequency of a particular data
             event occurring, given our assumptions about a repeatable process.
-            For example, if we were to imagine running a lottery to picka US
+            For example, if we were to imagine running a lottery to pick a US
             citizen, the probability of picking a female is 50.8%. Thus, 50.8% of
             the time we repeat carrying out this lottery (always starting from
             the same initial population), we will pick a female."),
@@ -152,8 +152,8 @@ ui <- list(
             title = "Risk",
             p("Risk refers to the probability of a data event that we view as being
             negative, undesirable, or 'bad'. For example, the lifetime risk of
-            developing skin cancer is about 2.6% (1/38) for white Americans.
-            Thus, we if imagine a process of picking white Americans and
+            developing skin cancer is about 2.6% (1/38) for White Americans.
+            Thus, if we imagine a process of picking White Americans and
             observing their lifetimes, 2.6% of the time we will pick an
             individual who will develop skin cancer."),
             collapsible = TRUE,
@@ -167,8 +167,8 @@ ui <- list(
             for a particular data event. We often calculate relative risk
             through the formula \\[RR=\\frac{\\text{Risk for Group 1}}
             {\\text{Risk for Group 2}}\\] For example, the relative risk of skin
-            cancer for a white American is \\(2.6\\%/0.1\\% = 0.026/0.001 = 26\\)
-            times as large as Black Americans."),
+            cancer for a White American is \\(2.6\\%/0.1\\% = 0.026/0.001 = 26\\)
+            times as large as for Black Americans."),
             collapsible = TRUE,
             collapsed = TRUE,
             footer= "Relative Risk is a measure of association.",
@@ -176,10 +176,10 @@ ui <- list(
           ),
           box(
             title = "Increased Risk",
-            p("Increased Risk (IR) is relative risk expressed as a percentage
+            p("Increased Risk (IR) is a relative risk expressed as a percentage
             increase over the lower risk group. As a formula \\[IR=
             \\left(\\text{Relative Risk}-1\\right)*100\\%\\] For example, since
-            the relative risk of skin cancer for a white American is 26 times
+            the relative risk of skin cancer for a White American is 26 times
             higher compared to Black Americans, then the increased risk is 2500%."),
             collapsible = TRUE,
             collapsed = TRUE,
@@ -192,13 +192,13 @@ ui <- list(
             event and the probability of that data event not happening (i.e.,
             the complement or the opposite event). There are two ways that odds
             are expressed: as a fraction or using 'odds notation' with a colon.
-            Letting \\(p=\\frac{x}{N}\\) represent the probability of a data event
+            Letting \\(p=\\frac{x}{N}\\) represents the probability of a data event
             happening, \\[\\text{Odds}=\\frac{p}{1-p}=\\frac{x/N} {(N-x)/N}
             \\equiv X:(N-X)\\] We read odds notation, \\(X:Y\\) as 'X to Y'.",
               br(),
-              "For example, the probability (risk) of a white American getting skin
+              "For example, the probability (risk) of a White American getting skin
             cancer is 2.6%, approximately \\(\\frac{1}{38}\\). Thus the odds of
-            a white American getting skin cancer are 1:37. For Black Americans,
+            a White American getting skin cancer are 1:37. For Black Americans,
             the odds of getting skin cancer are 1:999."),
             collapsible = TRUE,
             collapsed = TRUE,
@@ -207,12 +207,12 @@ ui <- list(
           ),
           box(
             title = "Odds Ratio",
-            p("An odds ratio is the ratio of the odds for two groups of the same/
-            similar data event. Suppose that the first group has a probability
+            p("An odds ratio is the ratio of the odds for two groups of the 
+            same/similar data event. Suppose that the first group has a probability
             of the data event of p and the second group has a probability of r.
             Then \\[\\text{Odds Ratio}=\\frac{p}{1-p}\\bigg/\\frac{r}{1-r}\\]",
               br(),
-              "For example, we found the odds of a white American (1:37) and a
+              "For example, we found the odds of a White American (1:37) and a
             Black American (1:999) getting skin cancer. The odds ratio for these
             two groups would be \\[\\frac{1/38}{37/38}\\bigg/
             \\frac{1/1000}{999/1000}\\approx 26.667\\]"),
@@ -220,10 +220,11 @@ ui <- list(
             collapsed = TRUE,
             footer= "Odds Ratio is a measure of association.",
             width = 12
-          ),
-          p(tags$em("Note:"), " there are other measures of association that are
-          not covered by this app. For example, Pearson's Correlation, Spearman's
-          Rho, and Kendall's Tau."),
+          ), 
+          p(tags$em("Note:"), " This app covers measures of association 
+            regarding dichotomous outcomes. There are other measures of 
+            association that are not covered by this app. For example, 
+            Pearson's Correlation, Spearman's Rho, and Kendall's Tau."), 
           br(),
           div(
             style = "text-align:center",
@@ -239,7 +240,7 @@ ui <- list(
         tabItem(
           tabName = "game",
           h2("Identifying Values"),
-          p("Read through each context carefuly. For the four given values,
+          p("Read through each context carefully. For the four given values,
           identify what type of value each one is."),
           h3("The Context"),
           uiOutput("question"),
@@ -481,16 +482,16 @@ server <- function(session, input, output) {
 
   # Set Prereqs link ----
   observeEvent(input$linkPreq, {
-    updateTabItems(session, "tabs", "prerequisite")
+    updateTabItems(session, "pages", "prerequisite")
   })
 
   # Define the two go2 buttons
   observeEvent(input$go1, {
-    updateTabItems(session, "tabs", "prerequisite")
+    updateTabItems(session, "pages", "prerequisite")
   })
 
   observeEvent(input$go2, {
-    updateTabItems(session, "tabs", "game")
+    updateTabItems(session, "pages", "game")
   })
 
   ## variables
@@ -522,8 +523,8 @@ server <- function(session, input, output) {
     }
   }, ignoreInit = TRUE)
 
-  observeEvent(input$tabs, {
-    if (input$tabs == "game") {
+  observeEvent(input$pages, {
+    if (input$pages == "game") {
       if (!gameProgress) { #if the user clicks the 'game' first time
         value$index <- 15 # start game with the last scenario on the question bank
         # correct_answer <- as.matrix(bank[1:60,1])
