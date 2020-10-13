@@ -2,6 +2,7 @@
 library(shinydashboard)
 library(shiny)
 library(shinyBS)
+library(shinyWidgets)
 library(boastUtils)
 
 ## App Meta Data----------------------------------------------------------------
@@ -55,12 +56,6 @@ ui <- dashboardPage(
   ),
   ## Body ----
   dashboardBody(
-    tags$head(
-      tags$link(
-        rel = "stylesheet", type = "text/css",
-        href = "https://educationshinyappteam.github.io/Style_Guide/theme/boast.css"
-      )
-    ),
     tabItems(
       ## First tab - Overview Tab----
       tabItem(
@@ -403,16 +398,6 @@ ui <- dashboardPage(
               disabled = TRUE
             )
           ),
-          column(
-            width = 2,
-            offset = 1,
-            bsButton(
-              inputId = "reset",
-              label = "RESET",
-              size = "large",
-              disabled = TRUE
-            )
-          ),
           br()
         )
       ),
@@ -468,12 +453,93 @@ ui <- dashboardPage(
 # Define the server ----
 server <- function(session, input, output) {
   
+  ## variables
+  # gameProgress to check whether the user enter the game first time or continue
+  gameProgress <- FALSE
+  
+  value <- reactiveValues(index = 15, mistake = 0, correct = 0)
+  context <- reactiveVal()
+  
+  # first column of the question bank
+  # use for scenarios. Make this variable class = 'list'.
+  # Also, do not pull the value that was took out before
+  correct_answer <- as.matrix(bank[1:60, 1]) 
+  
+  index_list <- reactiveValues(list = sample(1:14, 14, replace = FALSE))
+  
   # Remove correct / incorrect icons
   removeMarks <- function() {
     output$mark1 <- renderIcon()
     output$mark2 <- renderIcon()
     output$mark3 <- renderIcon()
     output$mark4 <- renderIcon()
+  }
+  
+  updateInputs <- function(index) {
+    # Update the first box
+    updateSelectInput(
+      session = session, inputId = "first",
+      label = bank[(1 + 4 * (index - 1)), 4],
+      choices = list(
+        "Select Answer", "Increased Risk",
+        "Odds", "Odds Ratio", "Probability",
+        "Relative Risk", "Risk"
+      )
+    )
+    # Update the second box
+    updateSelectInput(
+      session = session, inputId = "second",
+      label = bank[(2 + 4 * (index - 1)), 4],
+      choices = list(
+        "Select Answer", "Increased Risk",
+        "Odds", "Odds Ratio", "Probability",
+        "Relative Risk", "Risk"
+      )
+    )
+    # Update the third box
+    updateSelectInput(
+      session = session, inputId = "third",
+      label = bank[(3 + 4 * (index - 1)), 4],
+      choices = list(
+        "Select Answer", "Increased Risk",
+        "Odds", "Odds Ratio", "Probability",
+        "Relative Risk", "Risk"
+      )
+    )
+    # Update the fourth box
+    updateSelectInput(
+      session = session, inputId = "fourth",
+      label = bank[(4 + 4 * (index - 1)), 4],
+      choices = list(
+        "Select Answer", "Increased Risk",
+        "Odds", "Odds Ratio", "Probability",
+        "Relative Risk", "Risk"
+      )
+    )
+  }
+  
+  # Clear inputs, stored values, and pull new questions.
+  resetGame <- function() {
+    index_list$list <- c(sample(1:14, 14, replace = FALSE))
+    
+    value$index <- 15
+    
+    value$box1 <- 4 * value$index - 3
+    value$box2 <- 4 * value$index - 2
+    value$box3 <- 4 * value$index - 1
+    value$box4 <- 4 * value$index
+    
+    updateButton(session, "submit", disabled = FALSE)
+    updateButton(session, "reattempt", disable = TRUE)
+    updateButton(session, "nextq", disabled = TRUE)
+    
+    updateInputs(value$index)
+    
+    # Remove marks
+    removeMarks()
+    
+    value$correct <- 0
+    value$mistake <- 0
   }
   
   # Define info button ----
@@ -507,19 +573,6 @@ server <- function(session, input, output) {
     updateTabItems(session, "pages", "game")
   })
 
-  ## variables
-  # gameProgress to check whether the user enter the game first time or continue
-  gameProgress <- FALSE
-
-  value <- reactiveValues(index = 15, mistake = 0, correct = 0)
-  
-  # first column of the question bank
-  # use for scenarios. Make this variable class = 'list'.
-  # Also, do not pull the value that was took out before
-  correct_answer <- as.matrix(bank[1:60, 1]) 
-  
-  index_list <- reactiveValues(list = sample(1:14, 14, replace = FALSE))
-
   ## start challenge
   ################ hack(input$game) ####################
   observeEvent(input$go2, {
@@ -541,6 +594,9 @@ server <- function(session, input, output) {
       
       # the user can continue the game on when they come back
       gameProgress <<- TRUE
+      
+      # Initialize the game state using reset function
+      resetGame()
     }
   }, ignoreInit = TRUE)
 
@@ -560,61 +616,27 @@ server <- function(session, input, output) {
           p("Number of completed scenarios: ", value$correct, " out of 10")
         })
         gameProgress <<- TRUE
+        
+        # Initialize the game state using reset function
+        resetGame()
       }
     }
   }, ignoreInit = TRUE)
 
   ## scenario text
+  observe(context(bank[(1 + 4 * (value$index - 1)), 5]))
   output$question <- renderUI({
-    bank[(1 + 4 * (value$index - 1)), 5]
-  })
-
-  # Put the values to be identified as labels
-  observe({
-    # Update the first box
-    updateSelectInput(
-      session = session,
-      inputId = "first",
-      label = bank[(1 + 4 * (value$index - 1)), 4], # which scenario do you want?
-      choices = list(
-        "Select Answer", "Increased Risk", "Odds", "Odds Ratio",
-        "Probability", "Relative Risk", "Risk"
-      )
-    )
-    # Update the second box
-    updateSelectInput(
-      session = session,
-      inputId = "second",
-      label = bank[(2 + 4 * (value$index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk", "Odds", "Odds Ratio",
-        "Probability", "Relative Risk", "Risk"
-      )
-    )
-    # Update the third box
-    updateSelectInput(
-      session = session,
-      inputId = "third",
-      label = bank[(3 + 4 * (value$index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk", "Odds", "Odds Ratio",
-        "Probability", "Relative Risk", "Risk"
-      )
-    )
-    # Update the fourth box
-    updateSelectInput(
-      session = session,
-      inputId = "fourth",
-      label = bank[(4 + 4 * (value$index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk", "Odds", "Odds Ratio",
-        "Probability", "Relative Risk", "Risk"
-      )
-    )
+    context()
   })
 
   # Submit Button Actions
   observeEvent(input$submit, {
+    
+    # Check if the given question was answered correctly
+    q1 <- any(input$first == correct_answer[value$box1, 1])
+    q2 <- any(input$second == correct_answer[value$box2, 1])
+    q3 <- any(input$third == correct_answer[value$box3, 1])
+    q4 <- any(input$fourth == correct_answer[value$box4, 1])
     
     updateButton(session, "nextq", disabled = FALSE)
     updateButton(session, "submit", disabled = TRUE)
@@ -655,53 +677,118 @@ server <- function(session, input, output) {
         renderIcon(icon = "incorrect", html = TRUE)
       }
     })
-
+    
     ## Counting Mistakes
-    if (any(input$first != correct_answer[value$box1, 1]) ||
-      any(input$second != correct_answer[value$box2, 1]) ||
-      any(input$third != correct_answer[value$box3, 1]) ||
-      any(input$fourth != correct_answer[value$box4, 1])) {
+    success <- FALSE
+    if (!q1 || !q2 || !q3 || !q4) {
       value$mistake <- value$mistake + 1
-    }
-    
-    # when user gets all scenarios wrong, then the user has to reset the game.
-    if (value$mistake == 4) {
-      updateButton(session, "reattempt", disabled = TRUE)
-      updateButton(session, "submit", disabled = TRUE)
-      updateButton(session, "nextq", disabled = TRUE)
-      updateButton(session, "reset", disabled = FALSE)
-    }
-
-    ## Counting Correct answers
-    if (any(input$first == correct_answer[value$box1, 1]) &&
-      any(input$second == correct_answer[value$box2, 1]) &&
-      any(input$third == correct_answer[value$box3, 1]) &&
-      any(input$fourth == correct_answer[value$box4, 1])) {
+      
+      # When player makes enough mistakes to fall out of the tree, they must reset the game.
+      if (value$mistake == 4) {
+        
+        updateButton(session, "reattempt", disabled = TRUE)
+        updateButton(session, "submit", disabled = TRUE)
+        updateButton(session, "nextq", disabled = TRUE)
+        
+        msg <- "Game over! Please try again."
+        
+        ### Store xAPI statement ----
+        stmt <- boastUtils::generateStatement(
+          session,
+          verb = "failed",
+          object = "shiny-tab-game",
+          description = "Identify these values",
+          response = msg,
+          success = FALSE
+        )
+        
+        boastUtils::storeStatement(session, stmt)
+        
+        confirmSweetAlert(
+          session = session,
+          inputId = "end",
+          title = "Game Over!",
+          type = "error",
+          text = msg,
+          btn_labels = "Retry",
+          btn_colors = "orange"
+        )
+      } else if (!q1 && !q2 && !q3 && !q4) {
+        
+        # When the user misses all questions, the next button is disabled
+        updateButton(session, "nextq", disabled = TRUE)
+      } else {
+        # Player can proceed with some values incorrect.
+        success <- TRUE
+      }
+    } else if (q1 && q2 && q3 && q4) {
+      success <- TRUE
       value$correct <- value$correct + 1
-      updateButton(session, "reattempt", disabled = TRUE) # disable Reattempt button
+      
+      # Disable reattempt button if all questions are answered correctly.
+      updateButton(session, "reattempt", disabled = TRUE)
+      
+      # When the user gets to the end, alert message shows up and reset the game
+      if (value$correct == 10) {
+        
+        msg <- "You have completed this challenge!"
+        
+        confirmSweetAlert(
+          session = session,
+          inputId = "end",
+          title = "Well Done!",
+          type = "success",
+          text = msg,
+          btn_labels = "Game Over",
+          btn_colors = "orange"
+        )
+        
+        ### Store xAPI statement ----
+        stmt <- boastUtils::generateStatement(
+          session,
+          verb = "completed",
+          object = "shiny-tab-game",
+          description = msg,
+          completion = TRUE
+        )
+        
+        boastUtils::storeStatement(session, stmt)
+      }
     }
     
-    # when the user misses all questions, then next button is disabled
-    if (any(input$first != correct_answer[value$box1, 1]) &&
-      any(input$second != correct_answer[value$box2, 1]) &&
-      any(input$third != correct_answer[value$box3, 1]) &&
-      any(input$fourth != correct_answer[value$box4, 1])) {
-      updateButton(session, "nextq", disabled = TRUE)
-    }
-    
-    # when the user gets to the end, alert message shows up and reset the game
-    if (value$correct == 10) {
-      confirmSweetAlert(
-        session = session,
-        inputId = "end",
-        title = "Well Done!",
-        type = "success",
-        text = p("You have completed this challenge! Thank you for saving
-                 this poor little man!"),
-        btn_labels = "Game Over",
-        btn_colors = "orange"
+    ### Store xAPI statement ----
+    stmt <- boastUtils::generateStatement(
+      session,
+      verb = "answered",
+      object = "shiny-tab-game",
+      description = paste0(
+        "Identify these values: ",
+        bank[value$box1,4], ", ",
+        bank[value$box2,4], ", ",
+        bank[value$box3,4], ", ",
+        bank[value$box4,4], "."
+      ),
+      interactionType = "choice",
+      success = success,
+      response = paste(
+        input$first,
+        input$second,
+        input$third,
+        input$fourth,
+        sep = ", "
+      ),
+      extensions = list(
+        ref = "https://educationshinyappteam.github.io/BOAST/xapi/result/extensions/context",
+        value = jsonlite::toJSON(list(
+          context = context(),
+          matched = c(q1, q2, q3, q4),
+          correct = value$correct,
+          mistakes = value$mistake
+        ), auto_unbox = TRUE)
       )
-    }
+    )
+    
+    boastUtils::storeStatement(session, stmt)
   })
 
   # Next Button Actions
@@ -723,6 +810,8 @@ server <- function(session, input, output) {
     value$box2 <- 2 + 4 * (value$index - 1)
     value$box3 <- 3 + 4 * (value$index - 1)
     value$box4 <- 4 + 4 * (value$index - 1)
+    
+    updateInputs(value$index)
 
     # Remove marks
     removeMarks()
@@ -733,229 +822,16 @@ server <- function(session, input, output) {
     updateButton(session, "submit", disabled = FALSE)
     updateButton(session, "reattempt", disable = TRUE)
 
-    # Update the first box
-    updateSelectInput(
-      session = session, inputId = "first",
-      label = bank[(1 + 4 * (value$index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk",
-        "Odds", "Odds Ratio", "Probability",
-        "Relative Risk", "Risk"
-      )
-    )
-    # Update the second box
-    updateSelectInput(
-      session = session, inputId = "second",
-      label = bank[(2 + 4 * (value$index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk",
-        "Odds", "Odds Ratio", "Probability",
-        "Relative Risk", "Risk"
-      )
-    )
-    # Update the third box
-    updateSelectInput(
-      session = session, inputId = "third",
-      label = bank[(3 + 4 * (value$index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk",
-        "Odds", "Odds Ratio", "Probability",
-        "Relative Risk", "Risk"
-      )
-    )
-    # Update the fourth box
-    updateSelectInput(
-      session = session, inputId = "fourth",
-      label = bank[(4 + 4 * (value$index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk",
-        "Odds", "Odds Ratio", "Probability",
-        "Relative Risk", "Risk"
-      )
-    )
+    updateInputs(value$index)
 
     # Remove marks
     removeMarks()
   })
-
-  #### Reset button
-  observeEvent(input$reset, {
-    # reset the index_list with another randomly generated fourteen numbers
-    index_list$list <- c(sample(1:14, 14, replace = FALSE))
-    value$index <- 15
-    value$box1 <- 4 * value$index - 3
-    value$box2 <- 4 * value$index - 2
-    value$box3 <- 4 * value$index - 1
-    value$box4 <- 4 * value$index
-
-    updateButton(session, "submit", disabled = FALSE)
-    updateButton(session, "reattempt", disable = TRUE)
-    updateButton(session, "nextq", disabled = TRUE)
-    updateButton(session, "reset", disabled = TRUE)
-
-    # Update the first box
-    updateSelectInput(
-      session = session, inputId = "first",
-      label = bank[(1 + 4 * (value$index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk",
-        "Odds", "Odds Ratio", "Probability",
-        "Relative Risk", "Risk"
-      )
-    )
-    # Update the second box
-    updateSelectInput(
-      session = session, inputId = "second",
-      label = bank[(2 + 4 * (value$index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk",
-        "Odds", "Odds Ratio", "Probability",
-        "Relative Risk", "Risk"
-      )
-    )
-    # Update the third box
-    updateSelectInput(
-      session = session, inputId = "third",
-      label = bank[(3 + 4 * (value$index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk",
-        "Odds", "Odds Ratio", "Probability",
-        "Relative Risk", "Risk"
-      )
-    )
-    # Update the fourth box
-    updateSelectInput(
-      session = session, inputId = "fourth",
-      label = bank[(4 + 4 * (value$index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk",
-        "Odds", "Odds Ratio", "Probability",
-        "Relative Risk", "Risk"
-      )
-    )
-
-    # Remove marks
-    removeMarks()
-
-    value$correct <- 0
-    value$mistake <- 0
-  })
-
-  # When the game is over, alert message shows up
+  
+  # Game over alert
   observeEvent(input$end, {
-    
-    index_list$list <- c(sample(1:14, 14, replace = FALSE))
-    
-    value$index <- 15
-    
-    value$box1 <- 4 * value$index - 3
-    value$box2 <- 4 * value$index - 2
-    value$box3 <- 4 * value$index - 1
-    value$box4 <- 4 * value$index
-
-    updateButton(session, "submit", disabled = FALSE)
-    updateButton(session, "reattempt", disable = TRUE)
-    updateButton(session, "nextq", disabled = TRUE)
-    updateButton(session, "reset", disabled = TRUE)
-
-    # Update the first box
-    updateSelectInput(
-      session = session, inputId = "first",
-      label = bank[(1 + 4 * (value$index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk",
-        "Odds", "Odds Ratio", "Probability",
-        "Relative Risk", "Risk"
-      )
-    )
-    # Update the second box
-    updateSelectInput(
-      session = session, inputId = "second",
-      label = bank[(2 + 4 * (value$index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk",
-        "Odds", "Odds Ratio", "Probability",
-        "Relative Risk", "Risk"
-      )
-    )
-    # Update the third box
-    updateSelectInput(
-      session = session, inputId = "third",
-      label = bank[(3 + 4 * (value$index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk",
-        "Odds", "Odds Ratio", "Probability",
-        "Relative Risk", "Risk"
-      )
-    )
-    # Update the fourth box
-    updateSelectInput(
-      session = session, inputId = "fourth",
-      label = bank[(4 + 4 * (value$index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk",
-        "Odds", "Odds Ratio", "Probability",
-        "Relative Risk", "Risk"
-      )
-    )
-
-    # Remove marks
-    removeMarks()
-    
-    value$correct <- 0
-    value$mistake <- 0
+    resetGame()
   })
-
-  #### Rlocker issue. Please deal with this - Bob or Neil. Thank you! ####
-  # Gets current page address from the current session
-  # getCurrentAddress <- function(session){
-  #   return(paste0(
-  #     session$clientData$url_protocol, "//",
-  #     session$clientData$url_hostname,
-  #     session$clientData$url_pathname, ":",
-  #     session$clientData$url_port,
-  #     session$clientData$url_search
-  #   ))
-  # }
-  # observeEvent(input$submit,{
-  #   value$box1= 4*value$index-3
-  #   value$box2= 4*value$index-2
-  #   value$box3= 4*value$index-1
-  #   value$box4= 4*value$index
-  #   statement <- rlocker::createStatement(
-  #     list(
-  #       verb = list(
-  #         display = "answered"
-  #       ),
-  #       object = list(
-  #         id = paste0(getCurrentAddress(session), "#", value$index),
-  #         name = paste('Question', value$index, ":", bank[value$index*4,5]),
-  #         description = paste(bank[value$box1,4], bank[value$box2,4],
-  #                             bank[value$box3,4], bank[value$box4,4], sep =";")
-  #       ),
-  #       result = list(
-  #         success = (any(input$first == correct_answer[value$box1,1])&&
-  #                      any(input$second == correct_answer[value$box2,1])&&
-  #                      any(input$third == correct_answer[value$box3,1])&&
-  #                      any(input$fourth == correct_answer[value$box4,1])),
-  #         completion = (any(input$first != 'Select Answer')&&
-  #                         any(input$second != 'Select Answer')&&
-  #                         any(input$third != 'Select Answer')&&
-  #                         any(input$fourth != 'Select Answer')),
-  #         response = paste(input$first, input$second, input$third,
-  #                          input$fourth, correct_answer[value$box1,1],
-  #                          correct_answer[value$box2,1],
-  #                          correct_answer[value$box3,1],
-  #                          correct_answer[value$box4,1], sep = ";"),
-  #         duration = value$correct/10
-  #         #the total questions number to reach win is 10, the duration is
-  #         #the percentage of correct answers/total 10
-  #       )
-  #     )
-  #   )
-  #   # Store statement in locker and return status
-  #   status <- rlocker::store(session, statement)
-  # })
 
   ##### Draw the Hangman Game #####
   ## TODO: Refactor to produce output dynamically ##
