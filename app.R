@@ -281,7 +281,6 @@ ui <- dashboardPage(
                   width = 3,
                   uiOutput(
                     outputId = "mark1"
-                    # inline = TRUE
                   )
                 )
               ),
@@ -523,48 +522,47 @@ server <- function(session, input, output) {
 
   ## start challenge
   ################ hack(input$game) ####################
-  observeEvent(input$go2,
-    {
-      if (!gameProgress) { # if the user clicks the 'game' first time
+  observeEvent(input$go2, {
+    
+    # if the user clicks the 'game' first time
+    # start game with the last scenario on the question bank
+    if (!gameProgress) {
+      value$index <- 15 
+      # correct_answer <- as.matrix(bank[1:60, 1])
+      value$box1 <- 4 * value$index - 3 # first question on each scenario
+      value$box2 <- 4 * value$index - 2
+      value$box3 <- 4 * value$index - 1
+      value$box4 <- 4 * value$index
+
+      # track scores for each scenario
+      output$correct <- renderUI({ 
+        p("Number of completed scenarios: ", value$correct, " out of 10")
+      })
+      
+      # the user can continue the game on when they come back
+      gameProgress <<- TRUE
+    }
+  }, ignoreInit = TRUE)
+
+  observeEvent(input$pages, {
+    if (input$pages == "game") {
+      # if the user clicks the 'game' first time
+      if (!gameProgress) {
         # start game with the last scenario on the question bank
-        value$index <- 15 
-        # correct_answer <- as.matrix(bank[1:60, 1])
-        value$box1 <- 4 * value$index - 3 # first question on each scenario
+        value$index <- 15
+        # correct_answer <- as.matrix(bank[1:60,1])
+        value$box1 <- 4 * value$index - 3 # this is the first question on each scenario
         value$box2 <- 4 * value$index - 2
         value$box3 <- 4 * value$index - 1
         value$box4 <- 4 * value$index
 
-        output$correct <- renderUI({ # track scores for each scenario
+        output$correct <- renderUI({
           p("Number of completed scenarios: ", value$correct, " out of 10")
         })
-        # the user can continue the game on when they come back
         gameProgress <<- TRUE
       }
-    },
-    ignoreInit = TRUE
-  )
-
-  observeEvent(input$pages,
-    {
-      if (input$pages == "game") {
-        # if the user clicks the 'game' first time
-        if (!gameProgress) {
-          value$index <- 15 # start game with the last scenario on the question bank
-          # correct_answer <- as.matrix(bank[1:60,1])
-          value$box1 <- 4 * value$index - 3 # this is the first question on each scenario
-          value$box2 <- 4 * value$index - 2
-          value$box3 <- 4 * value$index - 1
-          value$box4 <- 4 * value$index
-
-          output$correct <- renderUI({
-            p("Number of completed scenarios: ", value$correct, " out of 10")
-          })
-          gameProgress <<- TRUE
-        }
-      }
-    },
-    ignoreInit = TRUE
-  )
+    }
+  }, ignoreInit = TRUE)
 
   ## scenario text
   output$question <- renderUI({
@@ -617,6 +615,7 @@ server <- function(session, input, output) {
 
   # Submit Button Actions
   observeEvent(input$submit, {
+    
     updateButton(session, "nextq", disabled = FALSE)
     updateButton(session, "submit", disabled = TRUE)
     updateButton(session, "reattempt", disabled = FALSE)
@@ -848,6 +847,7 @@ server <- function(session, input, output) {
     index_list$list <- c(sample(1:14, 14, replace = FALSE))
     
     value$index <- 15
+    
     value$box1 <- 4 * value$index - 3
     value$box2 <- 4 * value$index - 2
     value$box3 <- 4 * value$index - 1
@@ -958,6 +958,7 @@ server <- function(session, input, output) {
   # })
 
   ##### Draw the Hangman Game #####
+  ## TODO: Refactor to produce output dynamically ##
   output$scoreTree <- renderImage({
     ## Background
     if (value$mistake == 0) {
