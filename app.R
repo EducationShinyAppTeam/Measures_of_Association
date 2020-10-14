@@ -13,6 +13,10 @@ APP_DESCP <<- paste(
 )
 ## End App Meta Data------------------------------------------------------------
 
+# Global Constants ----
+ansOptions <- list("Select Answer", "Increased Risk", "Odds", "Odds Ratio",
+                   "Probability", "Relative Risk", "Risk")
+
 # Read in questions ----
 bank <- read.csv(file = "questionbank.csv", stringsAsFactors = FALSE)
 
@@ -105,7 +109,7 @@ ui <- dashboardPage(
         ),
         br(),
         div(
-          style = "text-align:center",
+          style = "text-align:center;",
           bsButton(
             inputId = "go1",
             label = "GO!",
@@ -120,12 +124,12 @@ ui <- dashboardPage(
         p(
           "This app was originally developed and coded by Zhiliang Zhang.
         The app was further updated by Daehoon Gwak in June 2020.
-        Special thanks to Luxin Wang and professor Neil Hatfield
+        Special thanks to Luxin Wang, Dr. Neil Hatfield, and Robert Carey
         for helping with some programming issues.",
           br(),
           br(),
           br(),
-          div(class = "updated", "Last Update: 7/18/2020 by DG.")
+          div(class = "updated", "Last Update: 10/13/2020 by NJH/RPC.")
         )
       ),
       ## Second tab - Prerequisite Tab ----
@@ -175,8 +179,8 @@ ui <- dashboardPage(
         ),
         box(
           title = "Increased Risk",
-          p("Increased Risk (IR) is a relative risk expressed as a percentage
-          increase over the lower risk group. As a formula \\[IR=
+          p("Increased Risk (IR) is a way to express relative risk as a percentage
+          increase over the lower risk group. As a formula, \\[IR=
           \\left(\\text{Relative Risk}-1\\right)*100\\%\\] For example, since
           the relative risk of skin cancer for a White American is 26 times
           higher compared to Black Americans, then the increased risk is 2500%."),
@@ -189,12 +193,12 @@ ui <- dashboardPage(
           title = "Odds",
           p(
             "Odds is the ratio of two probabilities--the probability of a data
-          event and the probability of that data event not happening (i.e.,
+          event and the probability of that same data event not happening (i.e.,
           the complement or the opposite event). There are two ways that odds
-          are expressed: as a fraction or using 'odds notation' with a colon.
-          Letting \\(p=\\frac{x}{N}\\) represents the probability of a data event
+          are expressed: 1) as a fraction or 2) using 'odds notation' with a colon.
+          Letting \\(p=\\frac{x}{N}\\) represent the probability of a data event
           happening, \\[\\text{Odds}=\\frac{p}{1-p}=\\frac{x/N} {(N-x)/N}
-          \\equiv X:(N-X)\\] We read odds notation, \\(X:Y\\) as 'X to Y'.",
+          \\equiv x:(N-x)\\] We read odds notation, \\(X:Y\\), as 'X to Y odds'.",
             br(),
             "For example, the probability (risk) of a White American getting skin
           cancer is 2.6%, approximately \\(\\frac{1}{38}\\). Thus the odds of
@@ -224,13 +228,14 @@ ui <- dashboardPage(
           footer = "Odds Ratio is a measure of association.",
           width = 12
         ),
-        p(tags$em("Note:"), " This app covers measures of association 
-            regarding dichotomous outcomes. There are other measures of 
-            association that are not covered by this app. For example, 
-            Pearson's Correlation, Spearman's Rho, and Kendall's Tau."), 
+        p(tags$em("Note: "), "This app only deals with measures of association
+          related to dichotomous probabilities (i.e., relative risks, increased
+          risks, and odds ratios). There are other measures of association that
+          are not covered by this app. For example, Pearson's Correlation,
+          Spearman's Rho, and Kendall's Tau."),
         br(),
         div(
-          style = "text-align:center",
+          style = "text-align:center;",
           bsButton(
             inputId = "go2",
             label = "GO!",
@@ -261,16 +266,8 @@ ui <- dashboardPage(
                   selectInput(
                     inputId = "first",
                     label = "first value",
-                    choices = list(
-                      "Select Answer",
-                      "Increased Risk",
-                      "Odds",
-                      "Odds Ratio",
-                      "Probability",
-                      "Relative Risk",
-                      "Risk"
-                    ),
-                    selectize = FALSE
+                    choices = ansOptions,
+                    selectize = TRUE
                   )
                 ),
                 column(
@@ -286,16 +283,8 @@ ui <- dashboardPage(
                   selectInput(
                     inputId = "second",
                     label = "second value",
-                    choices = list(
-                      "Select Answer",
-                      "Increased Risk",
-                      "Odds",
-                      "Odds Ratio",
-                      "Probability",
-                      "Relative Risk",
-                      "Risk"
-                    ),
-                    selectize = FALSE
+                    choices = ansOptions,
+                    selectize = TRUE
                   )
                 ),
                 column(
@@ -311,16 +300,8 @@ ui <- dashboardPage(
                   selectInput(
                     inputId = "third",
                     label = "third value",
-                    choices = list(
-                      "Select Answer",
-                      "Increased Risk",
-                      "Odds",
-                      "Odds Ratio",
-                      "Probability",
-                      "Relative Risk",
-                      "Risk"
-                    ),
-                    selectize = FALSE
+                    choices = ansOptions,
+                    selectize = TRUE
                   )
                 ),
                 column(
@@ -336,16 +317,8 @@ ui <- dashboardPage(
                   selectInput(
                     inputId = "fourth",
                     label = "fourth value",
-                    choices = list(
-                      "Select Answer",
-                      "Increased Risk",
-                      "Odds",
-                      "Odds Ratio",
-                      "Probability",
-                      "Relative Risk",
-                      "Risk"
-                    ),
-                    selectize = FALSE
+                    choices = ansOptions,
+                    selectize = TRUE
                   )
                 ),
                 column(
@@ -453,21 +426,21 @@ ui <- dashboardPage(
 
 # Define the server ----
 server <- function(session, input, output) {
-  
+
   ## variables
   # gameProgress to check whether the user enter the game first time or continue
   gameProgress <- FALSE
-  
+
   value <- reactiveValues(index = 15, mistake = 0, correct = 0)
   context <- reactiveVal()
-  
+
   # first column of the question bank
   # use for scenarios. Make this variable class = 'list'.
   # Also, do not pull the value that was took out before
-  correct_answer <- as.matrix(bank[1:60, 1]) 
-  
+  correct_answer <- as.matrix(bank[1:60, 1])
+
   index_list <- reactiveValues(list = sample(1:14, 14, replace = FALSE))
-  
+
   # Remove correct / incorrect icons
   removeMarks <- function() {
     output$mark1 <- renderIcon()
@@ -475,74 +448,58 @@ server <- function(session, input, output) {
     output$mark3 <- renderIcon()
     output$mark4 <- renderIcon()
   }
-  
+
   updateInputs <- function(index) {
     # Update the first box
     updateSelectInput(
       session = session, inputId = "first",
       label = bank[(1 + 4 * (index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk",
-        "Odds", "Odds Ratio", "Probability",
-        "Relative Risk", "Risk"
-      )
+      choices = ansOptions
     )
     # Update the second box
     updateSelectInput(
       session = session, inputId = "second",
       label = bank[(2 + 4 * (index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk",
-        "Odds", "Odds Ratio", "Probability",
-        "Relative Risk", "Risk"
-      )
+      choices = ansOptions
     )
     # Update the third box
     updateSelectInput(
       session = session, inputId = "third",
       label = bank[(3 + 4 * (index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk",
-        "Odds", "Odds Ratio", "Probability",
-        "Relative Risk", "Risk"
-      )
+      choices = ansOptions
     )
     # Update the fourth box
     updateSelectInput(
       session = session, inputId = "fourth",
       label = bank[(4 + 4 * (index - 1)), 4],
-      choices = list(
-        "Select Answer", "Increased Risk",
-        "Odds", "Odds Ratio", "Probability",
-        "Relative Risk", "Risk"
-      )
+      choices = ansOptions
     )
   }
-  
+
   # Clear inputs, stored values, and pull new questions.
   resetGame <- function() {
     index_list$list <- c(sample(1:14, 14, replace = FALSE))
-    
+
     value$index <- 15
-    
+
     value$box1 <- 4 * value$index - 3
     value$box2 <- 4 * value$index - 2
     value$box3 <- 4 * value$index - 1
     value$box4 <- 4 * value$index
-    
+
     updateButton(session, "submit", disabled = FALSE)
     updateButton(session, "reattempt", disable = TRUE)
     updateButton(session, "nextq", disabled = TRUE)
-    
+
     updateInputs(value$index)
-    
+
     # Remove marks
     removeMarks()
-    
+
     value$correct <- 0
     value$mistake <- 0
   }
-  
+
   # Define info button ----
   observeEvent(input$info, {
     sendSweetAlert(
@@ -577,11 +534,11 @@ server <- function(session, input, output) {
   ## start challenge
   ################ hack(input$game) ####################
   observeEvent(input$go2, {
-    
+
     # if the user clicks the 'game' first time
     # start game with the last scenario on the question bank
     if (!gameProgress) {
-      value$index <- 15 
+      value$index <- 15
       # correct_answer <- as.matrix(bank[1:60, 1])
       value$box1 <- 4 * value$index - 3 # first question on each scenario
       value$box2 <- 4 * value$index - 2
@@ -589,13 +546,13 @@ server <- function(session, input, output) {
       value$box4 <- 4 * value$index
 
       # track scores for each scenario
-      output$correct <- renderUI({ 
+      output$correct <- renderUI({
         p("Number of completed scenarios: ", value$correct, " out of 10")
       })
-      
+
       # the user can continue the game on when they come back
       gameProgress <<- TRUE
-      
+
       # Initialize the game state using reset function
       resetGame()
     }
@@ -617,7 +574,7 @@ server <- function(session, input, output) {
           p("Number of completed scenarios: ", value$correct, " out of 10")
         })
         gameProgress <<- TRUE
-        
+
         # Initialize the game state using reset function
         resetGame()
       }
@@ -632,67 +589,56 @@ server <- function(session, input, output) {
 
   # Submit Button Actions
   observeEvent(input$submit, {
-    
+
     # Check if the given question was answered correctly
     q1 <- any(input$first == correct_answer[value$box1, 1])
     q2 <- any(input$second == correct_answer[value$box2, 1])
     q3 <- any(input$third == correct_answer[value$box3, 1])
     q4 <- any(input$fourth == correct_answer[value$box4, 1])
-    
+
     updateButton(session, "nextq", disabled = FALSE)
     updateButton(session, "submit", disabled = TRUE)
     updateButton(session, "reattempt", disabled = FALSE)
 
     ## score system & check marks ##
-    ## TODO: Refactor so that logic is outside of render expression ##
-    output$mark1 <- renderUI({
-      # check out if the selected value is correct in the correct_answer matrix
-      if (any(input$first == correct_answer[value$box1, 1])) {
-        renderIcon(icon = "correct", html = TRUE)
-      }
-      else {
-        renderIcon(icon = "incorrect", html = TRUE)
-      }
-    })
-    output$mark2 <- renderUI({
-      if (any(input$second == correct_answer[value$box2, 1])) {
-        renderIcon(icon = "correct", html = TRUE)
-      }
-      else {
-        renderIcon(icon = "incorrect", html = TRUE)
-      }
-    })
-    output$mark3 <- renderUI({
-      if (any(input$third == correct_answer[value$box3, 1])) {
-        renderIcon(icon = "correct", html = TRUE)
-      }
-      else {
-        renderIcon(icon = "incorrect", html = TRUE)
-      }
-    })
-    output$mark4 <- renderUI({
-      if (any(input$fourth == correct_answer[value$box4, 1])) {
-        renderIcon(icon = "correct", html = TRUE)
-      }
-      else {
-        renderIcon(icon = "incorrect", html = TRUE)
-      }
-    })
-    
+    output$mark1 <- renderIcon(
+      icon = ifelse(input$first == correct_answer[value$box1, 1],
+                    "correct",
+                    "incorrect"),
+      width = 45
+    )
+    output$mark2 <- renderIcon(
+      icon = ifelse(input$second == correct_answer[value$box2, 1],
+                    "correct",
+                    "incorrect"),
+      width = 45
+    )
+    output$mark3 <- renderIcon(
+      icon = ifelse(input$third == correct_answer[value$box3, 1],
+                    "correct",
+                    "incorrect"),
+      width = 45
+    )
+    output$mark4 <- renderIcon(
+      icon = ifelse(input$fourth == correct_answer[value$box4, 1],
+                    "correct",
+                    "incorrect"),
+      width = 45
+    )
+
     ## Counting Mistakes
     success <- FALSE
     if (!q1 || !q2 || !q3 || !q4) {
       value$mistake <- value$mistake + 1
-      
+
       # When player makes enough mistakes to fall out of the tree, they must reset the game.
       if (value$mistake == 4) {
-        
         updateButton(session, "reattempt", disabled = TRUE)
         updateButton(session, "submit", disabled = TRUE)
         updateButton(session, "nextq", disabled = TRUE)
-        
+
         msg <- "Game over! Please try again."
-        
+
         ### Store xAPI statement ----
         stmt <- boastUtils::generateStatement(
           session,
@@ -702,9 +648,9 @@ server <- function(session, input, output) {
           response = msg,
           success = FALSE
         )
-        
+
         boastUtils::storeStatement(session, stmt)
-        
+
         confirmSweetAlert(
           session = session,
           inputId = "end",
@@ -715,7 +661,7 @@ server <- function(session, input, output) {
           btn_colors = "orange"
         )
       } else if (!q1 && !q2 && !q3 && !q4) {
-        
+
         # When the user misses all questions, the next button is disabled
         updateButton(session, "nextq", disabled = TRUE)
       } else {
@@ -725,15 +671,15 @@ server <- function(session, input, output) {
     } else if (q1 && q2 && q3 && q4) {
       success <- TRUE
       value$correct <- value$correct + 1
-      
+
       # Disable reattempt button if all questions are answered correctly.
       updateButton(session, "reattempt", disabled = TRUE)
-      
+
       # When the user gets to the end, alert message shows up and reset the game
       if (value$correct == 10) {
-        
+
         msg <- "You have completed this challenge!"
-        
+
         confirmSweetAlert(
           session = session,
           inputId = "end",
@@ -743,7 +689,7 @@ server <- function(session, input, output) {
           btn_labels = "Game Over",
           btn_colors = "orange"
         )
-        
+
         ### Store xAPI statement ----
         stmt <- boastUtils::generateStatement(
           session,
@@ -752,11 +698,11 @@ server <- function(session, input, output) {
           description = msg,
           completion = TRUE
         )
-        
+
         boastUtils::storeStatement(session, stmt)
       }
     }
-    
+
     ### Store xAPI statement ----
     stmt <- boastUtils::generateStatement(
       session,
@@ -788,7 +734,7 @@ server <- function(session, input, output) {
         ), auto_unbox = TRUE)
       )
     )
-    
+
     boastUtils::storeStatement(session, stmt)
   })
 
@@ -800,7 +746,7 @@ server <- function(session, input, output) {
 
     # number of scenario is now the first value of the list
     value$index <- index_list$list[1]
-    
+
     # remove the first value, so that next question starts with next value$index
     # this keeps going until there are only 2 elements left
     # in the list in the maximum possible case.
@@ -811,7 +757,7 @@ server <- function(session, input, output) {
     value$box2 <- 2 + 4 * (value$index - 1)
     value$box3 <- 3 + 4 * (value$index - 1)
     value$box4 <- 4 + 4 * (value$index - 1)
-    
+
     updateInputs(value$index)
 
     # Remove marks
@@ -828,7 +774,7 @@ server <- function(session, input, output) {
     # Remove marks
     removeMarks()
   })
-  
+
   # Game over alert
   observeEvent(input$end, {
     resetGame()
@@ -837,7 +783,7 @@ server <- function(session, input, output) {
   ##### Draw the Hangman Game #####
   ## TODO: Refactor to produce output dynamically ##
   output$scoreTree <- renderImage({
-    ## Background
+    ## Start
     if (value$mistake == 0) {
       return(list(
         src = "www/Cell01.jpg",
@@ -845,7 +791,7 @@ server <- function(session, input, output) {
         alt = "This is first tree which shows you are fine."
       ))
     }
-    ## Head
+    ## Down 1
     else if (value$mistake == 1) {
       return(list(
         src = "www/Cell02.jpg",
@@ -853,7 +799,7 @@ server <- function(session, input, output) {
         alt = "This is the second tree which shows you lose one life."
       ))
     }
-    ## Arms
+    ## Down 2
     else if (value$mistake == 2) {
       return(list(
         src = "www/Cell03.jpg",
@@ -861,7 +807,7 @@ server <- function(session, input, output) {
         alt = "This is the third tree which shows you only have two lives."
       ))
     }
-    ## Body
+    ## Down 3
     else if (value$mistake == 3) {
       return(list(
         src = "www/Cell04.jpg",
@@ -869,7 +815,7 @@ server <- function(session, input, output) {
         alt = "This is the fourth tree which shows you only have one life."
       ))
     }
-    ## Legs
+    ## Down 4
     else if (value$mistake == 4) {
       return(list(
         src = "www/Cell05.jpg",
