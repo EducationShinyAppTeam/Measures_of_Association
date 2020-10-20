@@ -782,7 +782,7 @@ server <- function(session, input, output) {
 
   ##### Draw the Hangman Game #####
   output$scoreTree <- renderImage({
-<<<<<<< HEAD
+
     alt <- c(
       "This is first tree which shows you are fine.",
       "This is the second tree which shows you lose one life.",
@@ -804,48 +804,6 @@ server <- function(session, input, output) {
       src = filename,
       alt = alt[index]
     )
-=======
-    ## Start
-    if (value$mistake == 0) {
-      return(list(
-        src = "www/Cell01.jpg",
-        contentType = "image/jpg",
-        alt = "This is first tree which shows you are fine."
-      ))
-    }
-    ## Down 1
-    else if (value$mistake == 1) {
-      return(list(
-        src = "www/Cell02.jpg",
-        contentType = "image/jpg",
-        alt = "This is the second tree which shows you lose one life."
-      ))
-    }
-    ## Down 2
-    else if (value$mistake == 2) {
-      return(list(
-        src = "www/Cell03.jpg",
-        contentType = "image/jpg",
-        alt = "This is the third tree which shows you only have two lives."
-      ))
-    }
-    ## Down 3
-    else if (value$mistake == 3) {
-      return(list(
-        src = "www/Cell04.jpg",
-        contentType = "image/jpg",
-        alt = "This is the fourth tree which shows you only have one life."
-      ))
-    }
-    ## Down 4
-    else if (value$mistake == 4) {
-      return(list(
-        src = "www/Cell05.jpg",
-        contentType = "image/jpg",
-        alt = "This is the last tree which shows you are dead."
-      ))
-    }
->>>>>>> f22ffc3367b28a20f127c813d5ac8a4ab8c6e9b4
   }, deleteFile = FALSE)
 }
 
