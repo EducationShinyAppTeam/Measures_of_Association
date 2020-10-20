@@ -835,48 +835,28 @@ server <- function(session, input, output) {
   })
 
   ##### Draw the Hangman Game #####
-  ## TODO: Refactor to produce output dynamically ##
   output$scoreTree <- renderImage({
-    ## Background
-    if (value$mistake == 0) {
-      return(list(
-        src = "www/Cell01.jpg",
-        contentType = "image/jpg",
-        alt = "This is first tree which shows you are fine."
-      ))
-    }
-    ## Head
-    else if (value$mistake == 1) {
-      return(list(
-        src = "www/Cell02.jpg",
-        contentType = "image/jpg",
-        alt = "This is the second tree which shows you lose one life."
-      ))
-    }
-    ## Arms
-    else if (value$mistake == 2) {
-      return(list(
-        src = "www/Cell03.jpg",
-        contentType = "image/jpg",
-        alt = "This is the third tree which shows you only have two lives."
-      ))
-    }
-    ## Body
-    else if (value$mistake == 3) {
-      return(list(
-        src = "www/Cell04.jpg",
-        contentType = "image/jpg",
-        alt = "This is the fourth tree which shows you only have one life."
-      ))
-    }
-    ## Legs
-    else if (value$mistake == 4) {
-      return(list(
-        src = "www/Cell05.jpg",
-        contentType = "image/jpg",
-        alt = "This is the last tree which shows you are dead."
-      ))
-    }
+    alt <- c(
+      "This is first tree which shows you are fine.",
+      "This is the second tree which shows you lose one life.",
+      "This is the third tree which shows you only have two lives.",
+      "This is the fourth tree which shows you only have one life.",
+      "This is the last tree which shows you are dead."
+    )
+    
+    index <- value$mistake + 1
+    
+    filename <- normalizePath(
+      file.path(
+        './www/',
+        paste0('Cell0', index, '.jpg')
+      )
+    )
+    
+    list(
+      src = filename,
+      alt = alt[index]
+    )
   }, deleteFile = FALSE)
 }
 
