@@ -5,14 +5,6 @@ library(shinyBS)
 library(shinyWidgets)
 library(boastUtils)
 
-## App Meta Data----------------------------------------------------------------
-APP_TITLE <<- "Measures of Association"
-APP_DESCP <<- paste(
-  "This app provides a hangman-style game format for helping students review",
-  "measures of association."
-)
-## End App Meta Data------------------------------------------------------------
-
 # Global Constants ----
 ansOptions <- list("Select Answer", "Increased Risk", "Odds", "Odds Ratio",
                    "Probability", "Relative Risk", "Risk")
@@ -790,16 +782,16 @@ server <- function(session, input, output) {
       "This is the fourth tree which shows you only have one life.",
       "This is the last tree which shows you are dead."
     )
-    
+
     index <- value$mistake + 1
-    
+
     filename <- normalizePath(
       file.path(
         './www/',
         paste0('Cell0', index, '.jpg')
       )
     )
-    
+
     list(
       src = filename,
       alt = alt[index]
